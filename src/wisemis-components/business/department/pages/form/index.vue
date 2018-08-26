@@ -1,10 +1,16 @@
 <template>
-    <my-form model="department" ref="myform"></my-form>
+    <my-form model="department" ref="myform" :eventhub="eventhub"></my-form>
 </template>
 <script>
 export default {
+    props:{
+        eventhub:{
+            type:Object
+        }
+    },
     created:function(){
-        this.$eventhub.$on(`ROW-NEWCHILD-department`,data=>{
+        var event=this.eventhub || this;
+        event.$on(`ROW-NEWCHILD-department`,data=>{
 
           this.$refs.myform.fields.forEach(item=>{
                 if(item.Name=='parentid')

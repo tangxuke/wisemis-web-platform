@@ -27,7 +27,7 @@ export default {
       type: String,
       default: "form"
     },
-    event:{
+    eventhub:{
         type:Object
     }
   },
@@ -48,7 +48,7 @@ export default {
           this.$axios.post(`/models/${this.model}/save`,data)
           .then(value=>{
               if(value.success){
-                  this.$eventhub.$emit(`DATA-${this.model}`,data);
+                  this.event.$emit(`DATA-${this.model}`,data);
               }
               else{
                   alert(value.message);
@@ -83,13 +83,18 @@ export default {
   },
   created:function(){
 
-      this.$eventhub.$on(`ROW-DATA-${this.model}`,data=>{
+      this.event.$on(`ROW-DATA-${this.model}`,data=>{
           this.fields.forEach(item=>{
               item.Value=data[item.Name]
           });
       });
 
       
+  },
+  computed:{
+      event:function(){
+          return this.eventhub || this;
+      }
   }
 
 };

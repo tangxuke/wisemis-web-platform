@@ -2,6 +2,8 @@
     <Tree :data="data5" :render="renderContent"></Tree>
 </template>
 <script>
+    import Vue from 'vue'
+
     export default {
         props:{
             model:{
@@ -12,8 +14,12 @@
                 type:String,
                 default:'tree'
             },
-            event:{
+            eventhub:{
                 type:Object
+            },
+            editable:{
+                type:Boolean,
+                default:false
             }
         },
         data () {
@@ -56,7 +62,7 @@
                     ]),
                     h('span', {
                         style: {
-                            display: 'inline-block',
+                            display: this.editable?'inline-block':'none',
                             float: 'right',
                             marginRight: '32px'
                         }
@@ -89,12 +95,12 @@
                 else
                     this.$set(data,'expand',true);
                 //发出节点数据改变通知
-                this.$eventhub.$emit(`ROW-DATA-${this.model}`,data);
+                this.event.$emit(`ROW-DATA-${this.model}`,data);
                 
             },
             append (data) {
                 //发出节点数据改变通知
-                this.$eventhub.$emit(`ROW-NEWCHILD-${this.model}`,data);
+                this.event.$emit(`ROW-NEWCHILD-${this.model}`,data);
             },
             remove (root, node, data) {
                 /*
@@ -108,8 +114,8 @@
                 .then(value=>{
                     if(value.success){
                         //发出节点数据改变通知
-                        this.$eventhub.$emit(`ROW-REMOVE-${this.model}`,data);
-                        this.$eventhub.$emit(`DATA-${this.model}`,data);
+                        this.event.$emit(`ROW-REMOVE-${this.model}`,data);
+                        this.event.$emit(`DATA-${this.model}`,data);
                     }else{
                         alert(value.message);
                     }
@@ -139,11 +145,16 @@
                 })
             }
         },
+        computed:{
+            event:function(){
+                return this.eventhub || this;
+            }
+        },
         mounted:function(){
             this.getModelData();
         },
         created:function(){
-            this.$eventhub.$on(`DATA-${this.model}`,data=>{
+            this.event.$on(`DATA-${this.model}`,data=>{
                 this.getModelData();
             })
         }
