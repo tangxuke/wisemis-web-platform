@@ -5,7 +5,7 @@
                 <div style="float:left;line-height:30px;padding:5px 0;">
                     已选择：
                     <span style="border-bottom: 1px dotted green;display:inline-block;width:150px;text-align:center;">
-                        {{selectedValue}}
+                        {{selectedValue.title}}
                     </span>
                 </div>
                 <div style="float:right;line-height:30px;padding:5px 0;">
@@ -21,7 +21,7 @@ export default {
     data(){
         return {
             value1:false,
-            selectedValue:null
+            selectedValue:{id:0,title:''}
         }
     },
     computed:{
@@ -35,7 +35,7 @@ export default {
          */
         ShowDialog(){
             this.value1=true;
-            this.selectedValue=null;
+            this.selectedValue={id:0,title:''};
         },
         ok(){
             this.$refs.dialog.ok();
@@ -48,7 +48,7 @@ export default {
     created:function(){
         //用户所选的值
         this.event.$on('SET-VALUE',(value)=>{
-            this.selectedValue=value;
+            this.selectedValue=Object.assign(this.selectedValue,value);
         });
     }
 }

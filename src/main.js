@@ -61,7 +61,7 @@ Vue.prototype.$baseUrl = process.env.BASE_URL
 new Vue({
   router,
   store,
-  i18n,
+  //i18n,
   render: h => h(App),
   created () {
     //获取用户菜单

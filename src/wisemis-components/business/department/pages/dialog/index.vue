@@ -25,7 +25,7 @@ export default {
     },
     created:function(){
         this.event.$on('ROW-DATA-department',data=>{
-            this.event.$emit('SET-VALUE',data.title)
+            this.event.$emit('SET-VALUE',data)
         })
     }
 }
