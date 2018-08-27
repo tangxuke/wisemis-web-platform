@@ -25,5 +25,8 @@ import reports from './routes/reports'
         
 //系统设置
 import settings from './routes/settings'
+
+//模型开发
+import models from './routes/models'
         
-export default [...shaosheng,...qiantai,...jiaowu,...renshi,...wupin,...caiwu,...weixin,...reports,...settings]
+export default [...shaosheng,...qiantai,...jiaowu,...renshi,...wupin,...caiwu,...weixin,...reports,...settings,...models]
