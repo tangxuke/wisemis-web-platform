@@ -1,1 +1,2 @@
 import './department'
+import './model'

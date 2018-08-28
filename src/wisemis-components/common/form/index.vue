@@ -18,19 +18,7 @@
 </template>
 <script>
 export default {
-  props: {
-    model: {
-      type: String,
-      required: true
-    },
-    action: {
-      type: String,
-      default: "form"
-    },
-    eventhub:{
-        type:Object
-    }
-  },
+  props: ['model','eventhub'],
   data() {
     return {
         /**
@@ -70,7 +58,7 @@ export default {
             console.log('没有设置模型名称！');
             return;
         }
-        this.$axios.post(`/models/${this.model}/${this.action}`).then(value=>{
+        this.$axios.post(`/models/${this.model}/form`).then(value=>{
             if(value.success){
                     this.fields=value.result.Fields.map(item=>{
                         item.ColSpan=24/value.result.ColumnCount*item.ColSpan;

@@ -5,23 +5,7 @@
     import Vue from 'vue'
 
     export default {
-        props:{
-            model:{
-                type:String,
-                required:true
-            },
-            action:{
-                type:String,
-                default:'tree'
-            },
-            eventhub:{
-                type:Object
-            },
-            editable:{
-                type:Boolean,
-                default:false
-            }
-        },
+        props:['model','eventhub','editable'],
         data () {
             return {
                 data5: [],
@@ -130,7 +114,7 @@
                     console.log('没有设置模型名称！');
                     return;
                 }
-                this.$axios.post(`/models/${this.model}/${this.action}`).then(value=>{
+                this.$axios.get(`/models/${this.model}/tree`).then(value=>{
 
                     if(value.success){
                         this.data5=value.result.map(item=>{

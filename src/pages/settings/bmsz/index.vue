@@ -12,7 +12,12 @@
 
         </Col>
         <Col span="14">
-            <department-form :eventhub="eventhub"></department-form>
+            <Row>
+                <department-form :eventhub="eventhub"></department-form>
+            </Row>
+            <Row>
+                <my-table model="department"></my-table>
+            </Row>
         </Col>
     </Row>   
     <div id="test"></div>
