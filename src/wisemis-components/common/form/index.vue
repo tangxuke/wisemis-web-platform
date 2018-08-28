@@ -1,5 +1,5 @@
 <template>
-    <div is="Form" :label-width="80">
+    <div is="Form" :label-width="80" style="padding:5px;">
         <div is="Row"> 
                 <div is="Col"  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                     <div is="FormItem" :label="field.Title || field.Name">
@@ -49,6 +49,10 @@ export default {
           .then(value=>{
               if(value.success){
                   this.event.$emit(`DATA-${this.model}`,data);
+                  alert('数据保存成功！');
+                  this.fields.forEach(item=>{
+                      item.Value=null
+                  })
               }
               else{
                   alert(value.message);

@@ -1,6 +1,9 @@
 <template>
-	<Table :columns="columns1" :data="data1">
-	</Table>
+	<div style="padding:5px;">
+		<Table :columns="columns1" :data="data1">
+		</Table>
+	</div>
+	
 </template>
 <script>
 	export default {
