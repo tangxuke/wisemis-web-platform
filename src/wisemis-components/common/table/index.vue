@@ -2,21 +2,29 @@
 	<div style="padding:5px;">
 		<Table :columns="columns1" :data="data1">
 		</Table>
+		<my-page style="margin-top:5px;"/>
 	</div>
 	
 </template>
 <script>
 	export default {
-		props:['model','eventhub'],
+		props:['model','eventhub','page-size','show-page'],
 		data () {
 			return {
 				columns1: [],
-				data1: []
+				data1: [],
+				currentpage:1	//当前页
 			}
 		},
 		computed:{
 			event:function(){
 				return this.eventhub || this;
+			},
+			thePageSize:function(){
+				return this['page-size'] || 10;	//默认一页10条记录
+			},
+			theShowPage:function(){
+				return this['show-page'] || false;	//默认不分页
 			}
 		},
 		methods:{
@@ -36,7 +44,10 @@
 				})
 			},
 			getData:function(){
-				var data={}
+				var data={
+					'page-size':this.thePageSize,
+					'current-page':this.currentpage
+				}
 				this.$axios.post(`/models/${this.model}/data`,data)
 				.then(value=>{
 						if(value.success){

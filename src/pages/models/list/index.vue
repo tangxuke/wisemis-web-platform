@@ -1,12 +1,10 @@
 <template>
     <d2-container>
         <Row>
-            <Col>
+            <Col span="12">
                 <my-form model="model" :eventhub="eventhub"></my-form>
             </Col>
-        </Row>
-        <Row>
-            <Col>
+            <Col span="12">
                 <model-table :eventhub="eventhub"></model-table>
             </Col>
         </Row>
