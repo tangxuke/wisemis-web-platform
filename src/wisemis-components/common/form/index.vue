@@ -17,6 +17,8 @@
     </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
   props: ['model','eventhub'],
   data() {
@@ -32,22 +34,31 @@ export default {
           var data={};
           this.fields.forEach(item=>{
               data[item.Name]=item.Value;
-          })
+              data[item.Name+'_OldValue']=item.OldValue;
+          });
+          console.log(data);
           this.$axios.post(`/models/${this.model}/save`,data)
           .then(value=>{
               if(value.success){
-                  this.event.$emit(`DATA-${this.model}`,data);
-                  alert('数据保存成功！');
+                  this.event.$emit(`DATA-${this.model}`,this.fields);
+                  this.$Message.success('数据保存成功！');
                   this.fields.forEach(item=>{
-                      item.Value=null
+                      item.Value=item.DefaultValue;
+                      item.OldValue=item.DefaultValue;
                   })
               }
               else{
-                  alert(value.message);
+                  this.$Modal.error({
+                      title:'保存失败提示',
+                      content:value.message
+                  });
               }
               
           }).catch(err=>{
-              alert(err.message);
+                this.$Modal.error({
+                    title:'保存失败提示',
+                    content:err.message
+                });
           })
           
       }
@@ -61,6 +72,8 @@ export default {
         this.$axios.post(`/models/${this.model}/form`).then(value=>{
             if(value.success){
                     this.fields=value.result.Fields.map(item=>{
+                        item.Value=item.DefaultValue;
+                        item.OldValue=item.DefaultValue;
                         item.ColSpan=24/value.result.ColumnCount*item.ColSpan;
                         if(item.ColSpan>24)
                             item.ColSpan=24;
@@ -77,7 +90,8 @@ export default {
 
       this.event.$on(`ROW-DATA-${this.model}`,data=>{
           this.fields.forEach(item=>{
-              item.Value=data[item.Name]
+              item.Value=data[item.Name];
+              item.OldValue=data[item.Name];
           });
       });
 
