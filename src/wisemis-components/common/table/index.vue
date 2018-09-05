@@ -1,25 +1,43 @@
 <template>
 	<div style="padding:5px;">
-		<Table :columns="columns1" :data="data1" @on-row-click="onRowClick">
-		</Table>
-		<my-page style="margin-top:5px;"/>
+		<!--Row style="padding-bottom:5px;">
+			<Button type="success" @click="createNew">新建</Button>
+		</Row-->
+		<Row>
+			<Table :columns="columns1" :data="data1" @on-row-click="onRowClick"></Table>
+		</Row>
+		<Row>
+			<my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
+		</Row>
+		
 	</div>
 	
 </template>
 <script>
 	export default {
-		props:['model','eventhub','page-size','show-page'],
+		props:['model','eventhub','pagesize','show-page'],
 		data () {
 			return {
 				columns1: [],
 				data1: [],
-				actionColumn:{
+				actionColumn:[{
 					title: 'Action',
                         key: 'action',
                         fixed: 'right',
-                        width: 80,
+                        width: 120,
                         render: (h, params) => {
                             return h('div', [
+								h('Button', {
+                                    props: {
+                                        type: 'text',
+                                        size: 'small'
+									},
+									on:{
+										click:()=>{
+											this.edit(params.row);
+										}
+									}
+                                }, 'Edit'),
                                 h('Button', {
                                     props: {
                                         type: 'text',
@@ -39,7 +57,7 @@
                                 }, 'Del')
                             ]);
                         }
-				},
+				}],
 				currentpage:1	//当前页
 			}
 		},
@@ -55,6 +73,12 @@
 			}
 		},
 		methods:{
+			createNew:function(){
+				this.event.$emit('ROW-DATA-'+this.model,{});
+			},
+			edit:function(data){
+				this.event.$emit('ROW-DATA-'+this.model,data);
+			},
 			delete:function(data){
 				this.$axios.post(`/models/${this.model}/delete`,data)
 				.then(value=>{
@@ -80,7 +104,7 @@
 				});
 			},
 			onRowClick:function(data){
-				this.event.$emit('ROW-DATA-'+this.model,data);
+				
 			},
 			getColumns:function(){
 				this.$axios.get(`/models/${this.model}/table`)
@@ -89,7 +113,7 @@
 							var fields=value.result.Fields.map(item=>{
 								return {title:item.Title,key:item.Name};
 							});
-							this.columns1=[...fields,this.actionColumn];
+							this.columns1=[...fields,...this.actionColumn];
 						}else{
 							alert(value.message);
 						}
@@ -98,11 +122,7 @@
 					alert(reason.message);
 				})
 			},
-			getData:function(){
-				var data={
-					'page-size':this.thePageSize,
-					'current-page':this.currentpage
-				}
+			getData:function(data){
 				this.$axios.post(`/models/${this.model}/data`,data)
 				.then(value=>{
 						if(value.success){
@@ -122,7 +142,7 @@
 		},
 		created:function(){
 			this.event.$on(`DATA-${this.model}`,data=>{
-				this.getData();
+				this.getData(data);
 			})
 		}
 	}

@@ -99,7 +99,7 @@
                     if(value.success){
                         //发出节点数据改变通知
                         this.event.$emit(`ROW-REMOVE-${this.model}`,data);
-                        this.event.$emit(`DATA-${this.model}`,data);
+                        this.event.$emit(`DATA-${this.model}`,{});
                     }else{
                         alert(value.message);
                     }
@@ -110,10 +110,6 @@
                 
             },
             getModelData(){
-                if(!this.model){
-                    console.log('没有设置模型名称！');
-                    return;
-                }
                 this.$axios.get(`/models/${this.model}/tree`).then(value=>{
 
                     if(value.success){

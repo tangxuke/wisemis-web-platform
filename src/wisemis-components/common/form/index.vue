@@ -2,7 +2,7 @@
     <div is="Form" :label-width="80" style="padding:5px;">
         <div is="Row"> 
                 <div is="Col"  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
-                    <div is="FormItem" :label="field.Title || field.Name">
+                    <div is="FormItem" :label="field.Title || field.Name" :required="field.IsKey">
                         <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`">
                             <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
                         </div>
@@ -11,7 +11,7 @@
         </div>
         <Row>
             <Col>
-                <Button type="success" @click="save">保存</Button>
+                <Button type="success" @click="save">保存</Button><Button type="default" @click="clear" style="margin-left:5px;">清空</Button>
             </Col>
         </Row>
     </div>
@@ -30,6 +30,12 @@ export default {
     };
   },
   methods:{
+      clear:function(){
+          this.fields.forEach(item=>{
+              item.OldValue=item.DefaultValue;
+              item.Value=item.DefaultValue;
+          });
+      },
       save:function(){
           var data={};
           this.fields.forEach(item=>{
@@ -40,7 +46,7 @@ export default {
           this.$axios.post(`/models/${this.model}/save`,data)
           .then(value=>{
               if(value.success){
-                  this.event.$emit(`DATA-${this.model}`,this.fields);
+                  this.event.$emit(`DATA-${this.model}`,{});
                   this.$Message.success('数据保存成功！');
                   this.fields.forEach(item=>{
                       item.Value=item.DefaultValue;

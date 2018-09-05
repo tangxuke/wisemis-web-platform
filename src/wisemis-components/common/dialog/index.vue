@@ -1,7 +1,7 @@
 <template>
-    <Modal v-model="value1" draggable scrollable :title="title" ref="dialog">
+    <Modal v-model="value1" scrollable :title="title" ref="dialog">
             <slot>模态框内容</slot>
-            <div slot="footer">
+            <div slot="footer"  style="height:30px;">
                 <div style="float:left;line-height:30px;padding:5px 0;">
                     已选择：
                     <span style="border-bottom: 1px dotted green;display:inline-block;width:150px;text-align:center;">
