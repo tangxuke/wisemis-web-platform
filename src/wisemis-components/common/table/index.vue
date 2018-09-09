@@ -1,21 +1,28 @@
 <template>
 	<div style="padding:5px;">
-		<!--Row style="padding-bottom:5px;">
-			<Button type="success" @click="createNew">新建</Button>
-		</Row-->
 		<Row>
-			<Table :columns="columns1" :data="data1" @on-row-click="onRowClick"></Table>
+			<Table
+				:border="true" 
+				:highlight-row="true"
+				:columns="columns1" 
+				:data="data1" 
+				@on-row-click="onRowClick">
+				</Table>
+				<my-page v-if="showPage" :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
 		</Row>
-		<Row>
-			<my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
+		<Row style="padding:5px 0;">
+			<my-button :model="model" :eventhub="eventhub" action="save" type="success">保存</my-button>
+			<my-button :model="model" :eventhub="eventhub" action="new" type="success" style="margin-left:5px;">新建</my-button>
 		</Row>
-		
 	</div>
 	
 </template>
+
+
+
 <script>
 	export default {
-		props:['model','eventhub','pagesize','show-page'],
+		props:['model','eventhub','pagesize','showPage'],
 		data () {
 			return {
 				columns1: [],
@@ -73,9 +80,6 @@
 			}
 		},
 		methods:{
-			createNew:function(){
-				this.event.$emit('ROW-DATA-'+this.model,{});
-			},
 			edit:function(data){
 				this.event.$emit('ROW-DATA-'+this.model,data);
 			},
@@ -104,14 +108,31 @@
 				});
 			},
 			onRowClick:function(data){
-				
+				this.event.$emit('ROW-DATA-'+this.model,data);
 			},
 			getColumns:function(){
 				this.$axios.get(`/models/${this.model}/table`)
 				.then(value=>{
 						if(value.success){
 							var fields=value.result.Fields.map(item=>{
-								return {title:item.Title,key:item.Name};
+								//对boolean显示为复选框
+								if(item.Type==='boolean'){
+									return {
+										title:item.Title,
+										key:item.Name,
+										minWidth:item.Width,
+										render:(h,params)=>{
+											return h('Checkbox',{
+												props:{
+													value:params.row[item.Name]
+												}
+											});
+										}
+									}
+								}
+
+
+								return {title:item.Title,key:item.Name,minWidth:item.Width};
 							});
 							this.columns1=[...fields,...this.actionColumn];
 						}else{

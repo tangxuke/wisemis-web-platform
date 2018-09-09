@@ -1,13 +1,13 @@
 <template>
     <d2-container>
         <Row>
-            <my-form model="model" :eventhub="eventhub"></my-form>
+            <my-toolbar model="model" :eventhub="eventhub"></my-toolbar>
         </Row>
         <Row>
-            <model-table :eventhub="eventhub"></model-table>
+            <my-table model="model" :eventhub="eventhub" :showPage="true"></my-table>
         </Row>
         <Row>
-            <my-form model="model-fields" :eventhub="eventhub"></my-form>
+            <my-relations model="model" :eventhub="eventhub"></my-relations>
         </Row>
     </d2-container>
 </template>

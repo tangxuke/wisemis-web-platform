@@ -1,5 +1,5 @@
 <template>
-    <div is="Form" :label-width="80" style="padding:5px;">
+    <div is="Form" :label-width="80" style="padding:5px;" ref="form">
         <div is="Row"> 
                 <div is="Col"  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                     <div is="FormItem" :label="field.Title || field.Name" :required="field.IsKey">
@@ -9,11 +9,6 @@
                     </div>
                 </div>
         </div>
-        <Row>
-            <Col>
-                <Button type="success" @click="save">保存</Button><Button type="default" @click="clear" style="margin-left:5px;">清空</Button>
-            </Col>
-        </Row>
     </div>
 </template>
 <script>
@@ -37,6 +32,7 @@ export default {
           });
       },
       save:function(){
+          
           var data={};
           this.fields.forEach(item=>{
               data[item.Name]=item.Value;

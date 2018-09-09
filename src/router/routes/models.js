@@ -18,6 +18,18 @@ export default [
                 meta:{...meta,title:'模型列表'}
             },
             {
+                path:'new',
+                name:'models-new',
+                component:()=>import('@/pages/models/new'),
+                meta:{...meta,title:'新建模型'}
+            },
+            {
+                path:'edit',
+                name:'models-edit',
+                component:()=>import('@/pages/models/edit'),
+                meta:{...meta,title:'编辑模型'}
+            },
+            {
                 path:'fields',
                 name:'models-fields',
                 component:()=>import('@/pages/models/fields'),
