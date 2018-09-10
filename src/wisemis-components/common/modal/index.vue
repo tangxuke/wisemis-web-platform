@@ -1,11 +1,12 @@
 <template>
-    <Modal v-model="value1" scrollable :title="title" :width="400" ref="dialog">
-        <my-form :model="model" :eventhub="eventhub"></my-form>
+    <Modal v-model="value1" scrollable :title="title" :width="width" @on-ok="Ok">
+        <my-form :model="model" :eventhub="event"></my-form>
     </Modal>
 </template>
 <script>
+import EVENT from '../event'
 export default {
-    props:['title','eventhub','model'],
+    props:['title','width','eventhub','model'],
     data(){
         return {
             value1:false
@@ -17,6 +18,9 @@ export default {
         }
     },
     methods:{
+        Ok(){
+            this.event.$emit(`${EVENT.SHOW}-`)
+        },
         /**
          * 显示对话框
          */

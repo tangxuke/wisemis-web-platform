@@ -1,6 +1,10 @@
 <template>
-	<div style="padding:5px;">
-		<Row>
+	<div>
+		<Row style="padding:5px;">
+			<Button type="success" @click="createNew">新建</Button>
+			<Button type="success" @click="getData">刷新</Button>
+		</Row>
+		<Row style="padding:5px;">
 			<Table
 				:border="true" 
 				:highlight-row="true"
@@ -8,12 +12,10 @@
 				:data="data1" 
 				@on-row-click="onRowClick">
 				</Table>
-				<my-page v-if="showPage" :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
+				<my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
 		</Row>
-		<Row style="padding:5px 0;">
-			<my-button :model="model" :eventhub="eventhub" action="save" type="success">保存</my-button>
-			<my-button :model="model" :eventhub="eventhub" action="new" type="success" style="margin-left:5px;">新建</my-button>
-		</Row>
+		<my-modal :title="title" :width="modalWidth"  :model="model" :eventhub="event" ref="modal">
+		</my-modal>
 	</div>
 	
 </template>
@@ -25,6 +27,8 @@
 		props:['model','eventhub','pagesize','showPage'],
 		data () {
 			return {
+				title:'新建',
+				modalWidth:200,
 				columns1: [],
 				data1: [],
 				actionColumn:[{
@@ -80,8 +84,15 @@
 			}
 		},
 		methods:{
+			createNew:function(){
+				this.event.$emit('NEW-'+this.model,{});
+				this.title='新建';
+				this.$refs.modal.ShowDialog();
+			},
 			edit:function(data){
-				this.event.$emit('ROW-DATA-'+this.model,data);
+				this.event.$emit('SHOW-'+this.model,data);
+				this.title='修改';
+				this.$refs.modal.ShowDialog();
 			},
 			delete:function(data){
 				this.$axios.post(`/models/${this.model}/delete`,data)
@@ -114,6 +125,7 @@
 				this.$axios.get(`/models/${this.model}/table`)
 				.then(value=>{
 						if(value.success){
+							this.modalWidth=300*value.result.ColumnCount;
 							var fields=value.result.Fields.map(item=>{
 								//对boolean显示为复选框
 								if(item.Type==='boolean'){
@@ -159,7 +171,7 @@
 		},
 		mounted:function(){
 			this.getColumns();
-			this.getData();
+			//this.getData();
 		},
 		created:function(){
 			this.event.$on(`DATA-${this.model}`,data=>{

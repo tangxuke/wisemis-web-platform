@@ -38,7 +38,7 @@ export default {
               data[item.Name]=item.Value;
               data[item.Name+'_OldValue']=item.OldValue;
           });
-          console.log(data);
+
           this.$axios.post(`/models/${this.model}/save`,data)
           .then(value=>{
               if(value.success){
@@ -90,12 +90,20 @@ export default {
   },
   created:function(){
 
-      this.event.$on(`ROW-DATA-${this.model}`,data=>{
+      this.event.$on(`SHOW-${this.model}`,data=>{
           this.fields.forEach(item=>{
               item.Value=data[item.Name];
               item.OldValue=data[item.Name];
           });
       });
+
+      this.event.$on(`NEW-${this.model}`,data=>{
+          this.fields.forEach(item=>{
+              item.Value=item.DefaultValue;
+              item.OldValue=item.DefaultValue;
+          });
+      });
+
 
       
   },
