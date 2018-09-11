@@ -22,7 +22,6 @@
         <Tabs type="card"  :animated="false">
             
             <TabPane v-for="relation in relations" :label="relation.title" :key="relation.childModel">
-                <my-button model="model-fields" action="new">新建</my-button>
                 <my-table :model="relation.childModel" :eventhub="eventhub"></my-table>
             </TabPane>
         </Tabs>

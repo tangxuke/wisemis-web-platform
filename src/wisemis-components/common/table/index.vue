@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<Row style="padding:5px;">
+		<Row>
 			<Button type="success" @click="createNew">新建</Button>
 			<Button type="success" @click="getData">刷新</Button>
 		</Row>
-		<Row style="padding:5px;">
+		<Row>
 			<Table
 				:border="true" 
 				:highlight-row="true"
@@ -20,9 +20,15 @@
 	
 </template>
 
-
+<style scoped>
+*{
+	margin:5px;
+}
+</style>
 
 <script>
+	import EVENT from '../event';
+
 	export default {
 		props:['model','eventhub','pagesize','showPage'],
 		data () {
@@ -85,14 +91,43 @@
 		},
 		methods:{
 			createNew:function(){
+				
 				this.event.$emit('NEW-'+this.model,{});
 				this.title='新建';
-				this.$refs.modal.ShowDialog();
+				this.$refs.modal.ShowDialog()
+				.then(value=>{
+					this.save(value);
+				})
+				.catch(reason=>{
+					
+				});
 			},
 			edit:function(data){
 				this.event.$emit('SHOW-'+this.model,data);
 				this.title='修改';
-				this.$refs.modal.ShowDialog();
+				this.$refs.modal.ShowDialog()
+				.then(value=>{
+					this.save(value);
+				})
+				.catch(reason=>{
+					
+				});
+			},
+			save(data){
+				var body={};
+				data.forEach(item=>{
+					body[item.Name]=item.Value;
+					body[item.Name+'_OldValue']=item.OldValue;
+				});
+				this.$axios.post(`/models/${this.model}/save`,body)
+				.then(value=>{
+					//发出保存通知
+
+					alert(JSON.stringify(value));
+				})
+				.catch(reason=>{
+					alert(reason.message);
+				});
 			},
 			delete:function(data){
 				this.$axios.post(`/models/${this.model}/delete`,data)
