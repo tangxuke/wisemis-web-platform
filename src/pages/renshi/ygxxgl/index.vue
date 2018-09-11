@@ -1,13 +1,8 @@
 
 <template>
-    <d2-container>
-        <Row>
-            员工信息管理
-        </Row>
-        <Row>
-            <button @click="test">Test</button>
-        </Row>
-    </d2-container>
+    <my-model-page model="model">
+        <my-button></my-button>
+    </my-model-page>
 </template>
 
 <script>

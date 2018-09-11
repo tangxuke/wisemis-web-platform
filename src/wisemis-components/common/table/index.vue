@@ -35,6 +35,7 @@
 			return {
 				title:'新建',
 				modalWidth:200,
+				where:{},
 				columns1: [],
 				data1: [],
 				actionColumn:[{
@@ -122,8 +123,8 @@
 				this.$axios.post(`/models/${this.model}/save`,body)
 				.then(value=>{
 					//发出保存通知
-
-					alert(JSON.stringify(value));
+					this.$Message.success('保存成功！');
+					this.getData();
 				})
 				.catch(reason=>{
 					alert(reason.message);
@@ -134,7 +135,7 @@
 				.then(value=>{
 					if(value.success){
 						this.$Message.success('删除成功！');
-						this.event.$emit(`DATA-${this.model}`,data);
+						this.getData();
 					}else{
 						this.$Modal.remove()
 						setTimeout(()=>{
@@ -177,8 +178,21 @@
 										}
 									}
 								}
-
-
+								//对icon显示为图标
+								if(item.ControlType==='Icon'){
+									return {
+										title:item.Title,
+										key:item.Name,
+										minWidth:item.Width,
+										render:(h,params)=>{
+											return h('Icon',{
+												props:{
+													type:params.row[item.Name]
+												}
+											});
+										}
+									}
+								}
 								return {title:item.Title,key:item.Name,minWidth:item.Width};
 							});
 							this.columns1=[...fields,...this.actionColumn];
@@ -190,8 +204,8 @@
 					alert(reason.message);
 				})
 			},
-			getData:function(data){
-				this.$axios.post(`/models/${this.model}/data`,data)
+			getData:function(){
+				this.$axios.post(`/models/${this.model}/data`,this.where)
 				.then(value=>{
 						if(value.success){
 							this.data1=value.result;
@@ -210,7 +224,8 @@
 		},
 		created:function(){
 			this.event.$on(`DATA-${this.model}`,data=>{
-				this.getData(data);
+				this.where=data;
+				this.getData();
 			})
 		}
 	}

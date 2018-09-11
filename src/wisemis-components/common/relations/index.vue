@@ -20,7 +20,6 @@
 <template>
     <Row class="demo-tabs-style2">
         <Tabs type="card"  :animated="false">
-            
             <TabPane v-for="relation in relations" :label="relation.title" :key="relation.childModel">
                 <my-table :model="relation.childModel" :eventhub="eventhub"></my-table>
             </TabPane>
@@ -68,6 +67,8 @@
             this.getRelations();
         },
         created:function(){
+            
+            //当点击主体表的行时
             this.event.$on(`ROW-DATA-${this.model}`,data=>{
                 this.relations.forEach(relation=>{
                     let modelName=relation.childModel;
@@ -82,12 +83,13 @@
                                 key:arrChildFields[i],
                                 value:data[arrMainFields[i]]
                             }
-                        )
+                        );
                     };
                     var data1={where};
                     this.event.$emit(`DATA-${modelName}`,data1);
+                    this.event.$emit(`SET-DEFAULT-${modelName}`,where);
                 })
-            })
+            });
         }
     }
 </script>

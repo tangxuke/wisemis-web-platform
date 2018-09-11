@@ -32,6 +32,7 @@ export default {
     },
     methods:{
         onclick:function(){
+            
             if(!this.model || !this.action){
                 alert('必须设置model和action属性！');
                 return;

@@ -104,6 +104,16 @@ export default {
           });
       });
 
+      this.event.$on(`SET-DEFAULT-${this.model}`,data=>{
+          data.forEach(item=>{
+              this.fields.forEach(e=>{
+                  if(e.Name===item.key){
+                      e.DefaultValue=item.value;
+                  }
+              })
+          })
+      })
+
 
       
   },
