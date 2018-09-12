@@ -1,18 +1,8 @@
 
 <template>
     <d2-container>
-        <Row>
-            <Button type="success" @click="$refs.dialog.ShowDialog()">教师布局</Button>
-        </Row>
-            <Row>
-                <my-form model="classroom" :eventhub="eventhub"></my-form>
-            </Row>
-            <Row>
-                <my-table model="classroom" :eventhub="eventhub" :pagesize="5"></my-table>
-            </Row>
-            <my-dialog ref="dialog">
-                <classroom-layout></classroom-layout>
-            </my-dialog>
+        <my-form model="tangxuke"></my-form>
+        <my-table model="tangxuke"></my-table>
     </d2-container>
 </template>
 

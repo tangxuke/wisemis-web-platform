@@ -90,7 +90,7 @@ export default {
   },
   created:function(){
 
-      this.event.$on(`SHOW-${this.model}`,data=>{
+      this.event.$on(`ROW-DATA-${this.model}`,data=>{
           this.fields.forEach(item=>{
               item.Value=data[item.Name];
               item.OldValue=data[item.Name];
