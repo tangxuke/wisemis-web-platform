@@ -12,7 +12,7 @@
 				:data="data1" 
 				@on-row-click="onRowClick">
 				</Table>
-				<my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/>
+				<!--my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/-->
 		</Row>
 		<my-modal :title="title" :width="modalWidth"  :model="model" :eventhub="event" ref="modal">
 		</my-modal>
