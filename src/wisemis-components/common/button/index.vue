@@ -15,41 +15,37 @@ export default {
         type:{
             type:String,
             default:'primary'
-        },
-        eventhub:{
-            type:Object
-        }
-    },
-    computed:{
-        event:function(){
-            return this.eventhub || this;
         }
     },
     data(){
         return {
-            enabled:true
+            enabled:true,
+            data1:{}
         }
     },
     methods:{
         onclick:function(){
-            
-            if(!this.model || !this.action){
-                alert('必须设置model和action属性！');
-                return;
-            }
-            //提交
-
+            alert(JSON.stringify(this.data1));
+            this.$axios.post(`/models/${this.model}/${this.action}`,this.data1)
+            .then(value=>{
+                if(value.success){
+                    alert('执行成功！');
+                }else{
+                    alert(value.message);
+                }
+            })
+            .catch(reason=>{
+                alert(reason.message);
+            })
         }
     },
     created:function(){
-        //按钮对行数据的变化感兴趣
-        this.event.$on(`ROW-DATA-${this.model}`,data=>{
-            this.event.$emit(`BUTTON-STATE-${this.model}-save`,true);
-        })
-
-        //接受按钮是否可用的消息
-        this.event.$on(`BUTTON-STATE-${this.model}-${this.action}`,enabled=>{
-            this.enabled=enabled;
+        //接受改变状态的消息
+        this.$on('on-enable',state=>{
+            this.enabled=state;
+        });
+        this.$on('SET-POST-DATA',data=>{
+            this.data1=data;
         })
     }
 }

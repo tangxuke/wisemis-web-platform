@@ -1,21 +1,14 @@
 <template>
 	<div>
 		<Row>
-			<Button type="success" @click="createNew">新建</Button>
-			<Button type="success" @click="getData">刷新</Button>
-		</Row>
-		<Row>
 			<Table
 				:border="true" 
 				:highlight-row="true"
-				:columns="columns1" 
-				:data="data1" 
+				:columns="columns" 
+				:data="data" 
 				@on-row-click="onRowClick">
 				</Table>
-				<!--my-page :model="model" :eventhub="eventhub" :pagesize="pagesize" ref="page" style="margin-top:5px;"/-->
 		</Row>
-		<my-modal :title="title" :width="modalWidth"  :model="model" :eventhub="event" ref="modal">
-		</my-modal>
 	</div>
 	
 </template>
@@ -27,16 +20,11 @@
 </style>
 
 <script>
-	import EVENT from '../event';
 
 	export default {
-		props:['model','eventhub','pagesize','showPage'],
+		props:['model','data'],
 		data () {
 			return {
-				title:'新建',
-				modalWidth:200,
-				where:{},
-				columns1: [],
 				data1: [],
 				actionColumn:[{
 					title: 'Action',
@@ -75,19 +63,60 @@
                                 }, 'Del')
                             ]);
                         }
-				}],
-				currentpage:1	//当前页
+				}]
 			}
 		},
 		computed:{
-			event:function(){
-				return this.eventhub || this;
+			columns:function(){
+				if(this.model.Fields){
+					var fields=this.model.Fields
+					.filter(item=>{
+						return item.ShowInGrid;
+					})
+					.map(item=>{
+								//对boolean显示为复选框
+								if(item.Type==='boolean'){
+									return {
+										title:item.Title,
+										key:item.Name,
+										minWidth:item.Width,
+										render:(h,params)=>{
+											return h('Checkbox',{
+												props:{
+													value:params.row[item.Name]
+												}
+											});
+										}
+									}
+								}
+								//对icon显示为图标
+								if(item.ControlType==='Icon'){
+									return {
+										title:item.Title,
+										key:item.Name,
+										minWidth:item.Width,
+										render:(h,params)=>{
+											return h('Icon',{
+												props:{
+													type:params.row[item.Name]
+												}
+											});
+										}
+									}
+								}
+								return {title:item.Title,key:item.Name,minWidth:item.Width};
+							});
+							return [...fields,...this.actionColumn];
+				}else{
+					return [];
+				}
 			},
-			thePageSize:function(){
-				return this['page-size'] || 10;	//默认一页10条记录
-			},
-			theShowPage:function(){
-				return this['show-page'] || false;	//默认不分页
+			fields:function(){
+				if(this.model){
+					return this.model.Fields;
+				}else{
+					return [];
+				}
 			}
 		},
 		methods:{
@@ -155,54 +184,11 @@
 				});
 			},
 			onRowClick:function(data){
-				this.event.$emit('ROW-DATA-'+this.model,data);
-			},
-			getColumns:function(){
-				this.$axios.get(`/models/${this.model}/table`)
-				.then(value=>{
-						if(value.success){
-							this.modalWidth=300*value.result.ColumnCount;
-							var fields=value.result.Fields.map(item=>{
-								//对boolean显示为复选框
-								if(item.Type==='boolean'){
-									return {
-										title:item.Title,
-										key:item.Name,
-										minWidth:item.Width,
-										render:(h,params)=>{
-											return h('Checkbox',{
-												props:{
-													value:params.row[item.Name]
-												}
-											});
-										}
-									}
-								}
-								//对icon显示为图标
-								if(item.ControlType==='Icon'){
-									return {
-										title:item.Title,
-										key:item.Name,
-										minWidth:item.Width,
-										render:(h,params)=>{
-											return h('Icon',{
-												props:{
-													type:params.row[item.Name]
-												}
-											});
-										}
-									}
-								}
-								return {title:item.Title,key:item.Name,minWidth:item.Width};
-							});
-							this.columns1=[...fields,...this.actionColumn];
-						}else{
-							alert(value.message);
-						}
-					}
-				).catch(reason=>{
-					alert(reason.message);
-				})
+				this.fields.forEach(item=>{
+					item.Value=data[item.Name];
+					item.OldValue=data[item.Name];
+				});
+				this.$emit('ON-ROW-CLICK',data);
 			},
 			getData:function(){
 				this.$axios.post(`/models/${this.model}/data`,this.where)
@@ -223,10 +209,15 @@
 			//this.getData();
 		},
 		created:function(){
-			this.event.$on(`DATA-${this.model}`,data=>{
+			this.event.$on(`DATA`,data=>{
 				this.where=data;
 				this.getData();
 			})
+		},
+		watch:{
+			theModel:function(newValue,oldValue){
+				this.getColumns();
+			}
 		}
 	}
 </script>

@@ -2,11 +2,12 @@ import axios from 'axios'
 
 export default {
     state:{
+        model:{}
     },
     getters:{
-
     },
     mutations:{
+
         'get-menu':function(state,vm){
 
             vm.$axios.get('/menus/menu-list')

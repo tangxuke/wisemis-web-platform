@@ -9,7 +9,7 @@ import MyPage from './page'
 import MyModal from './modal'
 import MyRelations from './relations'
 import MyButton from './button'
-import MyModelPage from './model-page'
+import MyRelation from './relation'
 
 Vue.component('my-form',MyForm)
 Vue.component('my-table',MyTable)
@@ -20,4 +20,4 @@ Vue.component('my-page',MyPage)
 Vue.component('my-modal',MyModal)
 Vue.component('my-relations',MyRelations)
 Vue.component('my-button',MyButton)
-Vue.component('my-model-page',MyModelPage)
+Vue.component('my-relation',MyRelation)

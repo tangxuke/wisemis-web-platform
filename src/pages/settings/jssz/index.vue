@@ -1,17 +1,6 @@
 
 <template>
     <d2-container>
-        <my-form model="tangxuke"></my-form>
-        <my-table model="tangxuke"></my-table>
+        <my-form model="model"></my-form>
     </d2-container>
 </template>
-
-<script>
-export default {
-    computed:{
-        eventhub:function(){
-            return this;
-        }
-    }
-}
-</script>
