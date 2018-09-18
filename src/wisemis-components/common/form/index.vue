@@ -1,5 +1,5 @@
 <template>
-    <Form is="Form" :label-width="80" style="padding:5px;">
+    <Form is="Form" :label-width="80">
         <Row>
 
         </Row>
@@ -52,64 +52,45 @@ export default {
               item.Value=item.DefaultValue;
           });
       },
-      save:function(){
-          
-          var data={};
-          this.fields.forEach(item=>{
-              data[item.Name]=item.Value;
-              data[item.Name+'_OldValue']=item.OldValue;
-          });
-          this.$axios.post(`/models/${this.model}/save`,data)
-          .then(value=>{
-              if(value.success){
-                  this.event.$emit(`DATA-${this.model}`,{});
-                  this.$Message.success('数据保存成功！');
-                  this.fields.forEach(item=>{
-                      item.Value=item.DefaultValue;
-                      item.OldValue=item.DefaultValue;
-                  })
+      setDefault(data){
+          Object.keys(data).forEach(item=>{
+              var field=this.fields.find(e=>{
+                  return e.Name===item;
+              });
+              if(field){
+                  field.DefaultValue=data[item];
               }
-              else{
-                  this.$Modal.error({
-                      title:'保存失败提示',
-                      content:value.message
-                  });
-              }
-              
-          }).catch(err=>{
-                this.$Modal.error({
-                    title:'保存失败提示',
-                    content:err.message
-                });
           })
-          
-      }
-  },
-  created:function(){
-
-      this.$on(`SET-VALUE`,data=>{
+      },
+      setValue(data){
           this.fields.forEach(item=>{
               item.Value=data[item.Name];
               item.OldValue=data[item.Name];
           });
-      });
+      },
+      save:function(){
+          
+        var data={};
+        this.fields.forEach(item=>{
+            data[item.Name]=item.Value;
+            data[item.Name+'_OldValue']=item.OldValue;
+        });
 
-      this.$on(`SET-NEW-VALUE`,data=>{
-          this.fields.forEach(item=>{
-              item.Value=item.DefaultValue;
-              item.OldValue=item.DefaultValue;
-          });
-      });
-
-      this.$on(`SET-DEFAULT`,data=>{
-          data.forEach(item=>{
-              this.fields.forEach(e=>{
-                  if(e.Name===item.key){
-                      e.DefaultValue=item.value;
-                  }
-              })
-          })
-      })   
+        return new Promise((resolve,reject)=>{
+            this.$axios.post(`/models/${this.model}/save`,data)
+            .then(value=>{
+                if(value.success){
+                    resolve(true);
+                }
+                else{
+                    reject(new Error(value.message));
+                }
+            })
+            .catch(reason=>{
+                reject(reason);
+            });
+        }); 
+      }
   },
   mounted() {
       this.readModel();

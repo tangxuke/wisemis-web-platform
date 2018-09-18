@@ -1,25 +1,22 @@
 <template>
     <Modal v-model="value1" scrollable :title="title" :width="width" @on-ok="ok" @on-cancel="cancel">
-        <my-form :model="model" :eventhub="event" ref="form"></my-form>
+        <my-form :model="model" ref="form"></my-form>
     </Modal>
 </template>
 <script>
-import EVENT from '../event'
 export default {
-    props:['title','width','eventhub','model'],
+    props:['title','width','model'],
     data(){
         return {
             value1:false
         }
     },
-    computed:{
-        event:function(){
-            return this.eventhub || this;
-        }
-    },
     methods:{
+        getForm(){
+            return this.$refs.form;
+        },
         ok(){
-            this.$emit('OK',this.$refs.form.fields);
+            this.$emit('OK');
         },
         cancel(){
             this.$emit('CANCEL');
@@ -30,11 +27,14 @@ export default {
         ShowDialog(){
             this.value1=true;
             return new Promise((resolve,reject)=>{
-                this.$on('OK',(fields)=>{
-                    resolve(fields)
-                });
-                this.$on('CANCEL',()=>{
-                    reject(new Error('CANCEL'))
+                this.$on('OK',()=>{
+                    this.$refs.form.save()
+                    .then(value=>{
+                        resolve(value);
+                    })
+                    .catch(reason=>{
+                        reject(reason);
+                    })
                 });
             });
         }

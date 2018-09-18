@@ -22,26 +22,25 @@
     <d2-container>
         <Row>
             <Col :span="8">
-                <Button type="success" @click="refreshModelData">刷新</Button>
-                <Button type="success" @click="createNewModel">新建</Button>
-                <my-table :model="model" :data="modelData" @ON-ROW-CLICK="onModelRowClick"></my-table>
-                <Button type="primary" @click="ApplyModel">生成 {{modelName}}</Button>
+                <my-table model="model" @ON-ROW-CLICK="onModelRowClick" ref="table">
+                    <Button type="primary" class="mybtn" @click="ApplyModel">生成 {{modelName}}</Button>
+                    <Button type="primary" class="mybtn" @click="ApplyModel">生成 {{modelName}}</Button>
+                </my-table>
             </Col>
             <Col :span="16">
                 <Row class="demo-tabs-style2">
                     <Tabs type="card"  :animated="false">
                         <TabPane label="编辑">
-                            <my-form model="model"></my-form>
+                            <my-form model="model" ref="form"></my-form>
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
                         <TabPane label="字段">
-                            <my-table :model="fieldModel"></my-table>
-                            <my-form :model="fieldModel"></my-form>
+                            <my-table model="model-fields" ref="fields"></my-table>
                         </TabPane>
-                        <TabPane label="预览">
+                        <!--TabPane label="预览">
                             <my-form></my-form>
                             <my-table></my-table>
-                        </TabPane>
+                        </TabPane-->
                     </Tabs>
                 </Row>
             </Col>
@@ -49,9 +48,14 @@
     </d2-container>
 </template>
 
-<script>
-import GetModel from '@/utils/get-model';
+<style scoped>
+.mybtn{
+    margin:3px;
+}
+</style>
 
+
+<script>
 export default {
     data(){
         return {
@@ -63,24 +67,18 @@ export default {
     },
     methods:{
         SaveModel(){
-            var data={};
-            this.model.Fields.forEach(item=>{
-                data[item.Name]=item.Value;
-                data[item.Name+'_OldValue']=item.OldValue;
-            });
-            this.$axios.post('/models/model/save',data)
+            this.$refs.form.save()
             .then(value=>{
-                if(value.success){
-                    alert('保存成功');
-                    this.refreshModelData();
-                    this.createNewModel();
-                }else{
-                    alert(value.message);
-                }
+                this.$Message.success('保存成功！');
+                this.$refs.form.clear();
+                this.$refs.table.refresh();
             })
             .catch(reason=>{
-                alert(reason.message);
-            })
+                this.$Modal.error({
+                    title:'保存失败',
+                    content:reason.message
+                });
+            });
         },
         ApplyModel(){
             if(!this.modelName)
@@ -97,56 +95,18 @@ export default {
                 alert(reason.message);
             })
         },
-        createNewModel(){
-            this.model.Fields.forEach(item=>{
-                item.Value=item.DefaultValue;
-                item.OldValue=item.DefaultValue;
-            })
-        },
         onModelRowClick(data){
             this.modelName=data['name'];
-            this.fieldModel.Fields.forEach(item=>{
-                if(item.Name==='model_name'){
-                    item.DefaultValue=data['name'];
-                    item.OldValue=data['name'];
-                    item.Value=data['name'];
+            this.$refs.form.setValue(data);
+            this.$refs.fields.setWhere([
+                {
+                    key:'model_name',
+                    value:this.modelName
                 }
-            });
-
-        },
-        getModel(){
-            GetModel(this,'model')
-            .then(value=>{
-                this.model=value;
-            })
-            .catch(reason=>{
-                alert(reason.message);
-            });
-
-            GetModel(this,'model-fields')
-            .then(value=>{
-                this.fieldModel=value;
-            })
-            .catch(reason=>{
-                alert(reason.message);
-            });
-        },
-        refreshModelData(){
-            this.$axios.post('/models/model/data')
-            .then(value=>{
-                if(value.success){
-                    this.modelData=value.result;
-                }else{
-                    alert(value.message);
-                }
-            })
-            .catch(reason=>{
-                alert(reason.message);
-            })
+            ]);
+            this.$refs.fields.getForm().setDefault({'model_name':this.modelName});
+            this.$refs.fields.refresh();
         }
-    },
-    mounted() {
-        this.getModel();
     }
 }
 </script>

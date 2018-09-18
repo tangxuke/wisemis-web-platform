@@ -1,13 +1,17 @@
 <template>
 	<div>
 		<Row>
+			<Button type="success" @click="createNew">新建</Button>
+			<Button type="default" @click="refresh">刷新</Button>
+			<slot></slot>
 			<Table
 				:border="true" 
 				:highlight-row="true"
 				:columns="columns" 
-				:data="data" 
+				:data="data1" 
 				@on-row-click="onRowClick">
-				</Table>
+			</Table>
+			<my-modal :title="title" :model="model" :width="modalWidth" ref="modal"></my-modal>
 		</Row>
 	</div>
 	
@@ -15,18 +19,21 @@
 
 <style scoped>
 *{
-	margin:5px;
+	margin: 3px;
 }
 </style>
+
 
 <script>
 
 	export default {
-		props:['model','data'],
+		props:['model'],
 		data () {
 			return {
-				data1: [],
-				actionColumn:[{
+				data1: [{}],
+				columns:[],
+				actionColumn:[
+					{
 					title: 'Action',
                         key: 'action',
                         fixed: 'right',
@@ -63,84 +70,38 @@
                                 }, 'Del')
                             ]);
                         }
-				}]
-			}
-		},
-		computed:{
-			columns:function(){
-				if(this.model.Fields){
-					var fields=this.model.Fields
-					.filter(item=>{
-						return item.ShowInGrid;
-					})
-					.map(item=>{
-								//对boolean显示为复选框
-								if(item.Type==='boolean'){
-									return {
-										title:item.Title,
-										key:item.Name,
-										minWidth:item.Width,
-										render:(h,params)=>{
-											return h('Checkbox',{
-												props:{
-													value:params.row[item.Name]
-												}
-											});
-										}
-									}
-								}
-								//对icon显示为图标
-								if(item.ControlType==='Icon'){
-									return {
-										title:item.Title,
-										key:item.Name,
-										minWidth:item.Width,
-										render:(h,params)=>{
-											return h('Icon',{
-												props:{
-													type:params.row[item.Name]
-												}
-											});
-										}
-									}
-								}
-								return {title:item.Title,key:item.Name,minWidth:item.Width};
-							});
-							return [...fields,...this.actionColumn];
-				}else{
-					return [];
-				}
-			},
-			fields:function(){
-				if(this.model){
-					return this.model.Fields;
-				}else{
-					return [];
-				}
+				}],
+				where:{},
+				title:'新建',
+				modalWidth:300
 			}
 		},
 		methods:{
+			getForm(){
+				return this.$refs.modal.getForm();
+			},
 			createNew:function(){
-				
-				this.event.$emit('NEW-'+this.model,{});
+				const form=this.$refs.modal.getForm();
+				form.clear();
 				this.title='新建';
 				this.$refs.modal.ShowDialog()
 				.then(value=>{
 					this.save(value);
 				})
 				.catch(reason=>{
-					
-				});
+					alert(reason.message);
+				});	
 			},
 			edit:function(data){
-				this.event.$emit('SHOW-'+this.model,data);
+				const form=this.$refs.modal.getForm();
+				form.setValue(data);
 				this.title='修改';
 				this.$refs.modal.ShowDialog()
 				.then(value=>{
 					this.save(value);
 				})
 				.catch(reason=>{
-					
+					alert(reason.message);
 				});
 			},
 			save(data){
@@ -164,7 +125,7 @@
 				.then(value=>{
 					if(value.success){
 						this.$Message.success('删除成功！');
-						this.getData();
+						this.refresh();
 					}else{
 						this.$Modal.remove()
 						setTimeout(()=>{
@@ -184,13 +145,12 @@
 				});
 			},
 			onRowClick:function(data){
-				this.fields.forEach(item=>{
-					item.Value=data[item.Name];
-					item.OldValue=data[item.Name];
-				});
 				this.$emit('ON-ROW-CLICK',data);
 			},
-			getData:function(){
+			setWhere(data){
+				this.where={where:data};
+			},
+			refresh:function(){
 				this.$axios.post(`/models/${this.model}/data`,this.where)
 				.then(value=>{
 						if(value.success){
@@ -202,22 +162,28 @@
 				).catch(reason=>{
 					alert(reason.message);
 				})
+			},
+			getModel(){
+				this.$axios.post(`/models/${this.model}/table`)
+				.then(value=>{
+					if(value.success){
+						this.modalWidth=value.result.ColumnCount*300;
+						const fields=value.result.Fields.map(item=>{
+							return {
+								key:item.Name,
+								title:item.Title,
+								minWidth:item.Width
+							}
+						});
+						this.columns=[...fields,...this.actionColumn];
+					}
+				}).catch(reason=>{
+					alert(reason.message);
+				});
 			}
 		},
 		mounted:function(){
-			this.getColumns();
-			//this.getData();
-		},
-		created:function(){
-			this.event.$on(`DATA`,data=>{
-				this.where=data;
-				this.getData();
-			})
-		},
-		watch:{
-			theModel:function(newValue,oldValue){
-				this.getColumns();
-			}
+			this.getModel();
 		}
 	}
 </script>
