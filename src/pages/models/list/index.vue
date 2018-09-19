@@ -34,12 +34,12 @@
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
                         <TabPane label="字段">
-                            <my-table model="model-fields" :pageSize="3" ref="fields"></my-table>
+                            <my-table model="model-fields" :pageSize="7" ref="fields"></my-table>
                         </TabPane>
-                        <!--TabPane label="预览">
-                            <my-form></my-form>
-                            <my-table></my-table>
-                        </TabPane-->
+                        <TabPane label="预览">                         
+                            <my-table :model="modelName" ref="preview">
+                            </my-table>
+                        </TabPane>
                     </Tabs>
                 </Row>
             </Col>
@@ -58,13 +58,16 @@
 export default {
     data(){
         return {
-            modelName:'',
-            model:{},
-            fieldModel:{},
-            modelData:[]
+            modelName:''
         }
     },
     methods:{
+        SaveModel(){
+            this.$refs.form.save()
+            .then(value=>{
+                this.$refs.table.refresh();
+            })
+        },
         ApplyModel(){
             if(!this.modelName)
                 return;

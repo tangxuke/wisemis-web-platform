@@ -1,3 +1,9 @@
 <template>
-    <div>查询表单</div>
+    <my-form :model="model"></my-form>
 </template>
+
+<script>
+export default {
+    props:['model']
+}
+</script>

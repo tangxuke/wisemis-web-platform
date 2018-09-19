@@ -21,9 +21,8 @@ export default {
       }
   },
   methods:{
-      readModel(){
+      getModel(){
         if(!this.model){
-            console.log('没有设置模型名称！');
             return;
         }
         this.$axios.post(`/models/${this.model}/form`).then(value=>{
@@ -106,7 +105,17 @@ export default {
       }
   },
   mounted() {
-      this.readModel();
+      this.getModel();
   },
+  computed:{
+      modelName:function(){
+          return this.model;
+      }
+  },
+  watch:{
+      modelName:function(){
+          this.getModel();
+      }
+  }
 };
 </script>

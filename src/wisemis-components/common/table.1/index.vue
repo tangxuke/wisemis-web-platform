@@ -6,7 +6,7 @@
 				<Button type="default" @click="copy" :disabled="!rowData">复制</Button>
 			</ButtonGroup>
 			<ButtonGroup style="margin:0 10px;">
-				<Button type="primary" @click="$refs.modal2.ShowDialog()">查询</Button>
+				<Button type="primary">查询</Button>
 				<Button type="default" @click="refresh">刷新</Button>
 			</ButtonGroup>
 			<slot></slot>
@@ -34,12 +34,7 @@
 			/>
 		</Row>
 		<Row>
-			<my-modal :title="title" :width="modalWidth" @OK="onSave" ref="modal1">
-				<my-form :model="model" ref="form"></my-form>
-			</my-modal>
-			<my-modal title="查询" @OK="onQuery" ref="modal2">
-				<my-query :model="model" ref="query"></my-query>
-			</my-modal>
+			<my-modal :title="title" :model="model" :width="modalWidth" ref="modal"></my-modal>
 		</Row>
 	</div>
 	
@@ -104,24 +99,9 @@
 		computed:{
 			pagesize:function(){
 				return this.pageSize || 8;
-			},
-			modelName:function(){
-				return this.model;
 			}
 		},
 		methods:{
-			getForm(){
-				return this.$refs.form;
-			},
-			onSave(){
-				this.$refs.form.save()
-				.then(value=>{
-					this.refresh();
-				})
-			},
-			onQuery(){
-				alert('query')
-			},
 			getCount:function(){
                 this.$axios.post(`models/${this.model}/count`)
                 .then(value=>{
@@ -132,23 +112,42 @@
                         
                 })
             },
+			getForm(){
+				return this.$refs.modal.getForm();
+			},
 			copy(){
-				const form=this.$refs.form;
+				const form=this.$refs.modal.getForm();
 				form.copy(this.rowData);
 				this.title='新建';
-				this.$refs.modal1.ShowDialog();
+				this.$refs.modal.ShowDialog()
+				.then(value=>{
+					this.refresh();
+				})
+				.catch(reason=>{
+				});	
 			},
 			createNew:function(){
-				const form=this.$refs.form;
+				const form=this.$refs.modal.getForm();
 				form.clear();
 				this.title='新建';
-				this.$refs.modal1.ShowDialog();
+				this.$refs.modal.ShowDialog()
+				.then(value=>{
+					this.refresh();
+				})
+				.catch(reason=>{
+				});	
 			},
 			edit:function(data){
-				const form=this.$refs.form;
+				const form=this.$refs.modal.getForm();
 				form.setValue(data);
 				this.title='修改';
-				this.$refs.modal1.ShowDialog();
+				this.$refs.modal.ShowDialog()
+				.then(value=>{
+					this.refresh();
+				})
+				.catch(reason=>{
+					
+				});
 			},
 			delete:function(data){
 				this.$axios.post(`/models/${this.model}/delete`,data)
@@ -215,9 +214,6 @@
 				});	
 			},
 			getModel(){
-				if(!this.model){
-					return;
-				}
 				this.$axios.post(`/models/${this.model}/table`)
 				.then(value=>{
 					if(value.success){
@@ -238,11 +234,6 @@
 		},
 		mounted:function(){
 			this.getModel();
-		},
-		watch:{
-			modelName:function(){
-				this.getModel();
-			}
 		}
 	}
 </script>
