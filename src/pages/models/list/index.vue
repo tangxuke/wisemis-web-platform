@@ -21,13 +21,12 @@
 <template>
     <d2-container>
         <Row>
-            <Col :span="8">
+            <Col :span="8" style="padding:3px;">
                 <my-table model="model" @ON-ROW-CLICK="onModelRowClick" ref="table">
-                    <Button type="primary" class="mybtn" @click="ApplyModel">生成 {{modelName}}</Button>
-                    <Button type="primary" class="mybtn" @click="ApplyModel">生成 {{modelName}}</Button>
+                    <Button type="primary" class="mybtn" @click="ApplyModel">生成模型</Button>
                 </my-table>
             </Col>
-            <Col :span="16">
+            <Col :span="16" style="padding:3px;">
                 <Row class="demo-tabs-style2">
                     <Tabs type="card"  :animated="false">
                         <TabPane label="编辑">
@@ -35,7 +34,7 @@
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
                         <TabPane label="字段">
-                            <my-table model="model-fields" ref="fields"></my-table>
+                            <my-table model="model-fields" :pageSize="3" ref="fields"></my-table>
                         </TabPane>
                         <!--TabPane label="预览">
                             <my-form></my-form>
@@ -66,20 +65,6 @@ export default {
         }
     },
     methods:{
-        SaveModel(){
-            this.$refs.form.save()
-            .then(value=>{
-                this.$Message.success('保存成功！');
-                this.$refs.form.clear();
-                this.$refs.table.refresh();
-            })
-            .catch(reason=>{
-                this.$Modal.error({
-                    title:'保存失败',
-                    content:reason.message
-                });
-            });
-        },
         ApplyModel(){
             if(!this.modelName)
                 return;

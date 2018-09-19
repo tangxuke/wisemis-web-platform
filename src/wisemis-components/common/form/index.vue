@@ -1,8 +1,5 @@
 <template>
     <Form is="Form" :label-width="80">
-        <Row>
-
-        </Row>
         <Row> 
             <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                 <FormItem :label="field.Title || field.Name" :required="field.IsKey">
@@ -39,6 +36,7 @@ export default {
                             item.ColSpan=24;
                         return item;
                     });
+
                 }else{
                     alert(value.message)
                 }
@@ -50,6 +48,12 @@ export default {
           this.fields.forEach(item=>{
               item.OldValue=item.DefaultValue;
               item.Value=item.DefaultValue;
+          });
+      },
+      copy:function(data){
+          this.clear();
+          this.fields.forEach(item=>{
+              item.Value=data[item.Name];
           });
       },
       setDefault(data){
@@ -69,7 +73,7 @@ export default {
           });
       },
       save:function(){
-          
+
         var data={};
         this.fields.forEach(item=>{
             data[item.Name]=item.Value;
@@ -80,13 +84,22 @@ export default {
             this.$axios.post(`/models/${this.model}/save`,data)
             .then(value=>{
                 if(value.success){
+                    this.$Message.success('保存成功！');
                     resolve(true);
                 }
                 else{
+                    this.$Modal.error({
+                        title:'保存失败提示',
+                        content:value.message
+                    });
                     reject(new Error(value.message));
                 }
             })
             .catch(reason=>{
+                this.$Modal.error({
+                    title:'保存失败提示',
+                    content:reason.message
+                });
                 reject(reason);
             });
         }); 

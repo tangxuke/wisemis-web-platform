@@ -10,6 +10,7 @@ import MyModal from './modal'
 import MyRelations from './relations'
 import MyButton from './button'
 import MyRelation from './relation'
+import MyQuery from './query'
 
 Vue.component('my-form',MyForm)
 Vue.component('my-table',MyTable)
@@ -21,3 +22,4 @@ Vue.component('my-modal',MyModal)
 Vue.component('my-relations',MyRelations)
 Vue.component('my-button',MyButton)
 Vue.component('my-relation',MyRelation)
+Vue.component('my-query',MyQuery)

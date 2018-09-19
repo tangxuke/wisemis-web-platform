@@ -27,7 +27,7 @@ export default {
         ShowDialog(){
             this.value1=true;
             return new Promise((resolve,reject)=>{
-                this.$on('OK',()=>{
+                this.$once('OK',()=>{
                     this.$refs.form.save()
                     .then(value=>{
                         resolve(value);
@@ -36,6 +36,7 @@ export default {
                         reject(reason);
                     })
                 });
+                
             });
         }
     }
