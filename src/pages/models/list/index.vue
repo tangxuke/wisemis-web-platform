@@ -34,10 +34,10 @@
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
                         <TabPane label="字段">
-                            <my-table model="model-fields" :pageSize="7" ref="fields"></my-table>
+                            <my-table model="model-fields" :pageSize="7" :showMoreColumns="true" ref="fields"></my-table>
                         </TabPane>
                         <TabPane label="预览">                         
-                            <my-table :model="modelName" ref="preview">
+                            <my-table :model="modelName" :pageSize="7" ref="preview">
                             </my-table>
                         </TabPane>
                     </Tabs>

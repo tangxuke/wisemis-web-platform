@@ -49,7 +49,7 @@
 <script>
 
 	export default {
-		props:['model','pageSize'],
+		props:['model','pageSize','showMoreColumns'],
 		data () {
 			return {
 				Count:0,
