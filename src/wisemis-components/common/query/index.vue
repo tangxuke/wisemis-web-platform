@@ -1,9 +1,43 @@
 <template>
-    <my-form :model="model"></my-form>
+    <Form is="Form" :label-width="80">
+        <Row> 
+            <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Title">
+                <FormItem :label="field.Title">
+                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="field.PlaceHolder">
+                        <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
+                    </div>
+                </FormItem>
+            </Col>
+        </Row>
+    </Form>
 </template>
 
 <script>
 export default {
-    props:['model']
+    props:['model'],
+    data(){
+        return {
+            fields:[]
+        }
+    },
+    methods:{
+        getModel(){
+            if(!this.model)
+                return;
+            this.$axios.post(`/models/${this.model}/query`)
+            .then(value=>{
+                if(value.success){
+                    this.fields=value.result.Fields.map(item=>{
+                        item.ColSpan=24/value.result.ColumnCount*item.ColSpan;
+                        return item;
+                    });
+                    alert(JSON.stringify(this.fields))
+                }
+            })
+        }
+    },
+    mounted(){
+        this.getModel();
+    }
 }
 </script>

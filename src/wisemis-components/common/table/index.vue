@@ -37,7 +37,7 @@
 			<my-modal :title="title" :width="modalWidth" @OK="onSave" ref="modal1">
 				<my-form :model="model" ref="form"></my-form>
 			</my-modal>
-			<my-modal title="查询" @OK="onQuery" ref="modal2">
+			<my-modal title="查询" :width="modalWidth2" @OK="onQuery" ref="modal2">
 				<my-query :model="model" ref="query"></my-query>
 			</my-modal>
 		</Row>
@@ -98,6 +98,7 @@
 				where:{},
 				title:'新建',
 				modalWidth:300,
+				modalWidth2:300,
 				rowData:null
 			}
 		},
@@ -230,6 +231,15 @@
 							}
 						});
 						this.columns=[...fields,...this.actionColumn];
+					}
+				}).catch(reason=>{
+					alert(reason.message);
+				});
+
+				this.$axios.post(`/models/${this.model}/query`)
+				.then(value=>{
+					if(value.success){
+						this.modalWidth2=value.result.ColumnCount*300;
 					}
 				}).catch(reason=>{
 					alert(reason.message);
