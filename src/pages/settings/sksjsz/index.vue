@@ -1,5 +1,7 @@
 
 <template>
-    <d2-container>上课时间设置</d2-container>
+    <d2-container>
+        <my-table model="class-time"></my-table>
+    </d2-container>
 </template>
                 

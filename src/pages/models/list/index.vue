@@ -22,8 +22,12 @@
     <d2-container>
         <Row>
             <Col :span="8" style="padding:3px;">
-                <my-table model="model" @ON-ROW-CLICK="onModelRowClick" ref="table">
-                    <Button type="primary" class="mybtn" @click="ApplyModel">生成模型</Button>
+                <my-table 
+                    model="model" 
+                    @ON-ROW-CLICK="onModelRowClick" 
+                    :autoRefresh="true" 
+                    ref="table">
+                    <Button type="primary" class="mybtn" @click="ApplyModel" :disabled="!modelName">生成模型</Button>
                 </my-table>
             </Col>
             <Col :span="16" style="padding:3px;">
@@ -34,10 +38,19 @@
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
                         <TabPane label="字段">
-                            <my-table model="model-fields" :pageSize="7" :showMoreColumns="true" ref="fields"></my-table>
+                            <my-table 
+                            model="model-fields" 
+                            :pageSize="7" 
+                            :showMoreColumns="true" 
+                            ref="fields">
+                            <span>
+                                模型名称：{{modelName}}
+                            </span>
+                            </my-table>
                         </TabPane>
                         <TabPane label="预览">                         
                             <my-table :model="modelName" :pageSize="7" ref="preview">
+                                <Button type="default" @click="$refs.preview.getModel()">请点击此按钮查看预览效果</Button>
                             </my-table>
                         </TabPane>
                     </Tabs>
@@ -86,14 +99,7 @@ export default {
         onModelRowClick(data){
             this.modelName=data['name'];
             this.$refs.form.setValue(data);
-            this.$refs.fields.setWhere([
-                {
-                    key:'model_name',
-                    value:this.modelName
-                }
-            ]);
-            this.$refs.fields.getForm().setDefault({'model_name':this.modelName});
-            this.$refs.fields.refresh();
+            this.$refs.table.setRelation(this.$refs.fields,'name','model_name',data);
         }
     }
 }

@@ -1,6 +1,6 @@
 
 <template>
     <d2-container>
-        <my-form model="model"></my-form>
+        <my-table model="classroom"></my-table>
     </d2-container>
 </template>

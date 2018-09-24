@@ -1,5 +1,7 @@
 
 <template>
-    <d2-container>节假日设置</d2-container>
+    <d2-container>
+        <my-table model="holidays"></my-table>
+    </d2-container>
 </template>
                 

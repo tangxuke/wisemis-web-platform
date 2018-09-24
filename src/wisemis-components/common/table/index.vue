@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Row>
+		<Row v-if="!hideButtons">
 			<ButtonGroup>
 				<Button type="success" @click="createNew">新建</Button>
 				<Button type="default" @click="copy" :disabled="!rowData">复制</Button>
@@ -23,7 +23,8 @@
 				>
 			</Table>
 		</Row>
-		<Row>
+		<Row v-if="!hideButtons">
+			<Button type="default" style="margin:5px 0;">导出</Button>
 			<Page 
 				:total="Count" 
 				:page-size="pagesize" 
@@ -47,9 +48,10 @@
 
 
 <script>
+	import Vue from 'vue';
 
 	export default {
-		props:['model','pageSize','showMoreColumns'],
+		props:['model','pageSize','autoRefresh','hideAction','hideButtons'],
 		data () {
 			return {
 				Count:0,
@@ -96,10 +98,12 @@
                         }
 				}],
 				where:{},
+				query:{},
 				title:'新建',
 				modalWidth:300,
 				modalWidth2:300,
-				rowData:null
+				rowData:null,
+				event:new Vue()
 			}
 		},
 		computed:{
@@ -108,6 +112,9 @@
 			},
 			modelName:function(){
 				return this.model;
+			},
+			relationMainTable:function(){
+				return this.relationTable;
 			}
 		},
 		methods:{
@@ -120,8 +127,27 @@
 					this.refresh();
 				})
 			},
+			setQuery(data){
+				this.query={query:data};
+			},
 			onQuery(){
-				alert('query')
+				var data=this.$refs.query.query();
+				this.query=data;
+				this.refresh();
+				//
+			},
+			/**
+			 * 清除查询条件
+			 */
+			clearQuery(){
+				this.query={};
+				this.$refs.query.clear();
+			},
+			/**
+			 * 清除表单
+			 */
+			clearForm(){
+				this.$refs.form.clear();
 			},
 			getCount:function(){
                 this.$axios.post(`models/${this.model}/count`)
@@ -176,7 +202,7 @@
 				});
 			},
 			onRowClick:function(data){
-				this.rowData=data;
+				this.rowData=data;	
 				this.$emit('ON-ROW-CLICK',data);
 			},
 			setWhere(data){
@@ -187,7 +213,7 @@
 					current:this.current,  //当前页
     				pagesize:this.pagesize //每页条数
 				}
-				this.$axios.post(`/models/${this.model}/data`,{...this.where,...page})
+				this.$axios.post(`/models/${this.model}/data`,{...this.where,...this.query,...page})
 				.then(value=>{
 						if(value.success){
 							this.data1=value.result;
@@ -201,12 +227,14 @@
 				})
 			},
 			refresh:function(){
-				this.$axios.post(`/models/${this.model}/count`,this.where)
+				this.$axios.post(`/models/${this.model}/count`,{...this.where,...this.query})
 				.then(value=>{
 					if(value.success){
 						this.Count=value.result;
-						this.current=1;
-						this.refreshPage(1);
+						var pages=Math.ceil(this.Count/this.pagesize);
+						if(this.current>pages)
+							this.current=pages;
+						this.refreshPage(this.current);
 					}else{
 						alert(value.message);
 					}
@@ -214,6 +242,33 @@
 				.catch(reason=>{
 					alert(reason.message);
 				});	
+			},
+			/**
+			 * 设置联动关系
+			 * @param {Vue} child 子表格
+			 * @param {string} mainFields 主关联字段列表
+			 * @param {string} childFields 子关联字段
+			 * @param {any} row 主表格行数据
+			 */
+			setRelation(child,mainFields,childFields,row){
+
+				if(!child || !mainFields || !childFields){
+					alert('关联参数不足！');
+					return;
+				}
+
+				var mainFs=mainFields.split(',');
+				var childFs=childFields.split(',');
+				var data={};
+				for(var i=0;i<mainFs.length;i++){
+					var childField=childFs[i];
+					var mainField=mainFs[i];
+					data[childField]=row[mainField];
+				};
+				child.clearQuery();
+				child.setWhere(data);
+				child.getForm().setDefault(data);
+				child.refresh();
 			},
 			getModel(){
 				if(!this.model){
@@ -223,14 +278,24 @@
 				.then(value=>{
 					if(value.success){
 						this.modalWidth=value.result.ColumnCount*300;
-						const fields=value.result.Fields.map(item=>{
+						const fields=value.result.Fields
+						.sort((a,b)=>{
+							return a.OrderId-b.OrderId;
+						})
+						.map(item=>{
 							return {
 								key:item.Name,
 								title:item.Title,
 								minWidth:item.Width
 							}
 						});
-						this.columns=[...fields,...this.actionColumn];
+						if(this.hideAction)
+							this.columns=fields;
+						else
+							this.columns=[...fields,...this.actionColumn];
+						if(this.autoRefresh){
+							this.refresh();
+						}
 					}
 				}).catch(reason=>{
 					alert(reason.message);
@@ -248,11 +313,6 @@
 		},
 		mounted:function(){
 			this.getModel();
-		},
-		watch:{
-			modelName:function(){
-				this.getModel();
-			}
 		}
 	}
 </script>

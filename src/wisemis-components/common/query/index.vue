@@ -21,6 +21,21 @@ export default {
         }
     },
     methods:{
+        query(){
+            const data={};
+            this.fields.filter(item=>{
+                return item.Value.length>0;
+            }).forEach(element => {
+                data[element.Name]=element.Value;
+            });
+
+            return {query:data};
+        },
+        clear(){
+            this.fields.forEach(item=>{
+                item.Value=item.DefaultValue;
+            })
+        },
         getModel(){
             if(!this.model)
                 return;
@@ -29,9 +44,9 @@ export default {
                 if(value.success){
                     this.fields=value.result.Fields.map(item=>{
                         item.ColSpan=24/value.result.ColumnCount*item.ColSpan;
+                        item.Value=item.DefaultValue;
                         return item;
                     });
-                    alert(JSON.stringify(this.fields))
                 }
             })
         }

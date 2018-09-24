@@ -2,7 +2,7 @@
     <Form is="Form" :label-width="80">
         <Row> 
             <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
-                <FormItem :label="field.Title || field.Name" :required="field.IsKey">
+                <FormItem :label="field.Title || field.Name" :required="field.IsKey" style="height:32px;">
                     <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`">
                         <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
                     </div>
