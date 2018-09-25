@@ -34,7 +34,13 @@ export default [
                 name:'models-fields',
                 component:()=>import('@/pages/models/fields'),
                 meta:{...meta,title:'模型字段列表'}
-            }        
+            },
+            {
+                path:'form-designer',
+                name:'models-form-designer',
+                component:()=>import('@/pages/models/form-designer'),
+                meta:{...meta,title:'表单设计器'}
+            }
         ]
     }
 ] 
