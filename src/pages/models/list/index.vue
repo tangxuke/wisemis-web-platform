@@ -48,6 +48,17 @@
                             </span>
                             </my-table>
                         </TabPane>
+                        <TabPane label="事件">
+                            <my-table
+                            model="model-scripts"
+                            :pageSize="7" 
+                            :showMoreColumns="true" 
+                            ref="scripts">
+                            <span>
+                                模型名称：{{modelName}}
+                            </span>
+                            </my-table>
+                        </TabPane>
                         <TabPane label="预览">                         
                             <my-table :model="modelName" :pageSize="7" ref="preview">
                                 <Button type="default" @click="$refs.preview.getModel()">请点击此按钮查看预览效果</Button>
@@ -100,6 +111,7 @@ export default {
             this.modelName=data['name'];
             this.$refs.form.setValue(data);
             this.$refs.table.setRelation(this.$refs.fields,'name','model_name',data);
+            this.$refs.table.setRelation(this.$refs.scripts,'name','model_name',data);
         }
     }
 }
