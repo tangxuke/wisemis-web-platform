@@ -3,7 +3,7 @@
         <Row> 
             <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                 <FormItem :label="field.Title || field.Name" :required="field.IsKey" style="height:32px;">
-                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`">
+                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`" :ref="field.Name">
                         <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
                     </div>
                 </FormItem>
@@ -21,6 +21,17 @@ export default {
       }
   },
   methods:{
+      /**
+       * @param {{field:String,type:String,params:String,code:String}[]} events
+       */
+      setEvents(events){
+          if(!Array.isArray(events))
+            return;
+          events.forEach(ev=>{
+              var params=ev.params.split(',');
+              this.refs[ev.field].$on(ev.type,new Function(params,ev.code));
+          });
+      },
       getModel(){
         if(!this.model){
             return;
@@ -35,7 +46,8 @@ export default {
                             item.ColSpan=24;
                         return item;
                     });
-
+                    //处理事件
+                    this.setEvents(value.result.Script);
                 }else{
                     alert(value.message)
                 }
