@@ -3,11 +3,14 @@
         <Row> 
             <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                 <FormItem :label="field.Title || field.Name" :required="field.IsKey" style="height:32px;">
-                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`" :ref="field.Name">
+                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`" :element-id="field.Name">
                         <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
                     </div>
                 </FormItem>
             </Col>
+        </Row>
+        <Row>
+            <Button type="default" @click="setEvents">Set Events</Button>
         </Row>
     </Form>
 </template>
@@ -22,14 +25,24 @@ export default {
   },
   methods:{
       /**
+       * 设置焦点
+       * @param {string} field
+       */
+      setFocus(field){
+          var element=document.getElementById(field);
+          element.focus();
+      },
+      /**
        * @param {{field:String,type:String,params:String,code:String}[]} events
        */
       setEvents(events){
+          
           if(!Array.isArray(events))
             return;
+    
           events.forEach(ev=>{
-              var params=ev.params.split(',');
-              this.refs[ev.field].$on(ev.type,new Function(params,ev.code));
+                var element=document.getElementById(ev.field);
+                element.addEventListener(ev.type,new Function(ev.params,ev.code));
           });
       },
       getModel(){
@@ -47,12 +60,15 @@ export default {
                         return item;
                     });
                     //处理事件
-                    this.setEvents(value.result.Script);
+                    setTimeout(() => {
+                        this.setEvents(value.result.Scripts);
+                    }, 1000);
+                    
                 }else{
-                    alert(value.message)
+                    alert('1'+value.message)
                 }
             }).catch(reason=>{
-                alert(reason.message);
+                alert('2'+reason.message);
             })
       },
       clear:function(){
@@ -122,11 +138,6 @@ export default {
   computed:{
       modelName:function(){
           return this.model;
-      }
-  },
-  watch:{
-      modelName:function(){
-          this.getModel();
       }
   }
 };
