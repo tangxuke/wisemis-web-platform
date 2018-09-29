@@ -9,9 +9,6 @@
                 </FormItem>
             </Col>
         </Row>
-        <Row>
-            <Button type="default" @click="setEvents">Set Events</Button>
-        </Row>
     </Form>
 </template>
 

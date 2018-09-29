@@ -27,7 +27,7 @@
                     @ON-ROW-CLICK="onModelRowClick" 
                     :autoRefresh="true" 
                     ref="table">
-                    <Button type="primary" class="mybtn" @click="ApplyModel" :disabled="!modelName">生成模型</Button>
+                    <Button type="primary" class="mybtn" @click="ApplyModel" :disabled="!modelName">保存数据库对象</Button>
                 </my-table>
             </Col>
             <Col :span="16" style="padding:3px;">
@@ -95,10 +95,10 @@ export default {
         ApplyModel(){
             if(!this.modelName)
                 return;
-            this.$axios.post('/models/model/apply',{modelName:this.modelName})
+            this.$axios.post(`/models/${this.modelName}/save-db-object`)
             .then(value=>{
                 if(value.success){
-                    alert('生成模型成功！');
+                    alert('保存数据库对象成功！');
                 }else{
                     alert(value.message);
                 }
