@@ -82,7 +82,8 @@
 export default {
     data(){
         return {
-            modelName:''
+            modelName:'',
+            value1:''
         }
     },
     methods:{

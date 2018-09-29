@@ -3,12 +3,13 @@
         <Row> 
             <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Name">
                 <FormItem :label="field.Title || field.Name" :required="field.IsKey" style="height:32px;">
-                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`" :element-id="field.Name">
+                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="`请输入${(field.Title || field.Name)}...`" :ref="field.Name">
                         <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
                     </div>
                 </FormItem>
             </Col>
         </Row>
+        <Button @click="setEvents">SetEvents</Button>
     </Form>
 </template>
 
@@ -17,7 +18,8 @@ export default {
   props: ['model'],
   data(){
       return {
-          fields:[]
+          fields:[],
+          events:[]
       }
   },
   methods:{
@@ -26,8 +28,8 @@ export default {
        * @param {string} field
        */
       setFocus(field){
-          var element=document.getElementById(field);
-          element.focus();
+          var el=this.$refs[field][0];
+          el.setFocus();
       },
       /**
        * @param {{field:String,type:String,params:String,code:String}[]} events
@@ -38,8 +40,9 @@ export default {
             return;
     
           events.forEach(ev=>{
-                var element=document.getElementById(ev.field);
-                element.addEventListener(ev.type,new Function(ev.params,ev.code));
+              var el=this.$refs[ev.field][0];
+              var params=ev.params || '';
+              el.$on(ev.type,new Function(params,ev.code).apply(this));
           });
       },
       getModel(){
@@ -58,8 +61,8 @@ export default {
                     });
                     //处理事件
                     setTimeout(() => {
-                        this.setEvents(value.result.Scripts);
-                    }, 1000);
+                        this.setEvents(value.result.Scripts)
+                    }, 500);
                     
                 }else{
                     alert('1'+value.message)
