@@ -9,7 +9,6 @@
                 </FormItem>
             </Col>
         </Row>
-        <Button @click="setEvents">SetEvents</Button>
     </Form>
 </template>
 
@@ -18,8 +17,7 @@ export default {
   props: ['model'],
   data(){
       return {
-          fields:[],
-          events:[]
+          fields:[]
       }
   },
   methods:{
@@ -42,7 +40,10 @@ export default {
           events.forEach(ev=>{
               var el=this.$refs[ev.field][0];
               var params=ev.params || '';
-              el.$on(ev.type,new Function(params,ev.code).apply(this));
+              el.$on(ev.type,()=>{
+                  var fn=new Function(params,ev.code);
+                  fn.apply(this,arguments);
+              });
           });
       },
       getModel(){
@@ -95,8 +96,9 @@ export default {
       },
       setValue(data){
           this.fields.forEach(item=>{
-              item.Value=data[item.Name];
-              item.OldValue=data[item.Name];
+              var value=data[item.Name];
+              item.Value=value;
+              item.OldValue=value;
           });
       },
       save:function(){

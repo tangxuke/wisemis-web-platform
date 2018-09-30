@@ -3,7 +3,7 @@
     type="textarea" 
     v-model="value1" 
     :placeholder="placeholder"
-    :rows="4"
+    :autosize="true"
     ></Input>
 </template>
 <script>
