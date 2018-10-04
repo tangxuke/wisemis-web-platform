@@ -35,7 +35,7 @@
 			/>
 		</Row>
 		<Row>
-			<my-modal :title="title" :width="modalWidth" @OK="onSave" ref="modal1">
+			<my-modal :title="title" :width="modalWidth" :loading="true" @OK="onSave" ref="modal1">
 				<my-form :model="model" ref="form"></my-form>
 			</my-modal>
 			<my-modal title="查询" :width="modalWidth2" @OK="onQuery" ref="modal2">
@@ -121,11 +121,20 @@
 			getForm(){
 				return this.$refs.form;
 			},
-			onSave(){
-				this.$refs.form.save()
-				.then(value=>{
-					this.refresh();
-				})
+			/**
+			 * 保存数据
+			 * @param {MyModal} modal 对话框对象
+			 */
+			onSave(modal){
+				if(this.$refs.form.checkValid()){
+					this.$refs.form.save()
+					.then(value=>{
+						modal.value1=false;
+						this.refresh();
+					});
+				}else{
+					modal.$refs.modal.buttonLoading=false;
+				}				
 			},
 			setQuery(data){
 				this.query={query:data};

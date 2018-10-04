@@ -33,7 +33,7 @@
             <Col :span="16" style="padding:3px;">
                 <Row class="demo-tabs-style2">
                     <Tabs type="card"  :animated="false">
-                        <TabPane label="编辑">
+                        <TabPane label="编辑" style="height:500px;">
                             <my-form model="model" ref="form"></my-form>
                             <Button  type="success" @click="SaveModel">保存</Button>
                         </TabPane>
@@ -53,11 +53,21 @@
                             model="model-scripts"
                             :pageSize="7" 
                             :showMoreColumns="true" 
+                            @ON-ROW-CLICK="onScriptlRowClick"
                             ref="scripts">
                             <span>
                                 模型名称：{{modelName}}
                             </span>
                             </my-table>
+                            <p style="color:blue;">事件代码：</p>
+                            <p>
+                                <Input 
+                                    type="textarea" 
+                                    v-model="scriptCode" 
+                                    readonly 
+                                    autosize
+                                    />
+                            </p>
                         </TabPane>
                         <TabPane label="预览">                         
                             <my-table :model="modelName" :pageSize="7" ref="preview">
@@ -83,7 +93,8 @@ export default {
     data(){
         return {
             modelName:'',
-            value1:''
+            value1:'',
+            scriptCode:''
         }
     },
     methods:{
@@ -113,6 +124,10 @@ export default {
             this.$refs.form.setValue(data);
             this.$refs.table.setRelation(this.$refs.fields,'name','model_name',data);
             this.$refs.table.setRelation(this.$refs.scripts,'name','model_name',data);
+            this.scriptCode='';
+        },
+        onScriptlRowClick(data){
+            this.scriptCode=data['code'];
         }
     }
 }

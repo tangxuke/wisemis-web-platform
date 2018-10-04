@@ -5,14 +5,20 @@
               v-for="field in fields" 
               :key="field.Name"
               :oFieldObject="field"
+              :ref="field.Name"
               ></my-field-control>
         </Row>
     </Form>
 </template>
 
 <script>
+import MyFieldControl from '@/wisemis-components/controls/field-control';
+
 export default {
   props: ["model"],
+  components:{
+    'my-field-control':MyFieldControl
+  },
   data() {
     return {
       fields: [],
@@ -20,14 +26,20 @@ export default {
     };
   },
   methods: {
-    test(){
-        this.getSqlValue('select * from dddd1',[],'wisemis')
-        .then(value=>{
-            console.log(value);
-        })
-        .catch(reason=>{
-            console.log(reason.message);
-        })
+    /**
+     * 检查数据有效性
+     * @returns {boolean}
+     */
+    checkValid(){
+      var oField=this.fields.find(item=>{
+        return item.IsKey && !item.Value;
+      });
+      if(oField){
+        alert(oField.Title+'不能为空！');
+        oField.control.setFocus();
+        return false;
+      }
+      return true;
     },
     /**
      * 设置焦点
@@ -85,21 +97,6 @@ export default {
                 return Promise.reject(new Error(value.message));
         });
     },
-    /**
-     * @param {{field:String,type:String,params:String,code:String}[]} events
-     */
-    setEvents(events) {
-      if (!Array.isArray(events)) return;
-
-      events.forEach(ev => {
-        var el = this.$refs[ev.field][0];
-        var params = ev.params || "";
-        el.$on(ev.type, () => {
-          var fn = new Function(params, ev.code);
-          fn.apply(this, arguments);
-        });
-      });
-    },
     getModel() {
       if (!this.model) {
         return;
@@ -110,22 +107,19 @@ export default {
           if (value.success) {
             this.database=value.result.Database;
             this.fields = value.result.Fields.map(item => {
+              item.thisform=this;
               item.Value = item.DefaultValue;
               item.OldValue = item.DefaultValue;
               item.ColSpan = (24 / value.result.ColumnCount) * item.ColSpan;
               if (item.ColSpan > 24) item.ColSpan = 24;
               return item;
             });
-            //处理事件
-            setTimeout(() => {
-              this.setEvents(value.result.Scripts);
-            }, 500);
           } else {
-            alert("1" + value.message);
+            alert(value.message);
           }
         })
         .catch(reason => {
-          alert("2" + reason.message);
+          alert(reason.message);
         });
     },
     clear: function() {

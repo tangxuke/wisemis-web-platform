@@ -1,21 +1,13 @@
 <template>
     <div>
-        <Input v-model="value1" @on-focus="openDialog"/>
-        <department-dialog ref="dialog1" :eventhub="event"></department-dialog>
+        <Input v-model="oFieldObject.Value" @on-focus="openDialog" ref="control"/>
+        <department-dialog ref="dialog1"></department-dialog>
     </div>
 </template>
 
 <script>
 export default {
-    props:['value'],
-    computed:{
-        event:function(){
-            return this;
-        },
-        value1:function(){
-            return this.value;
-        }
-    },
+    props:['oFieldObject'],
     methods:{
         openDialog(){
             this.$refs.dialog1.ShowDialog()
