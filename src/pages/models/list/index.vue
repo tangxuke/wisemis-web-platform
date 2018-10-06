@@ -27,22 +27,28 @@
                     @ON-ROW-CLICK="onModelRowClick" 
                     :autoRefresh="true" 
                     ref="table">
-                    <Button type="primary" class="mybtn" @click="ApplyModel" :disabled="!modelName">保存数据库对象</Button>
                 </my-table>
             </Col>
             <Col :span="16" style="padding:3px;">
                 <Row class="demo-tabs-style2">
                     <Tabs type="card"  :animated="false">
-                        <TabPane label="编辑" style="height:500px;">
-                            <my-form model="model" ref="form"></my-form>
-                            <Button  type="success" @click="SaveModel">保存</Button>
-                        </TabPane>
                         <TabPane label="字段">
                             <my-table 
                             model="model-fields" 
                             :pageSize="7" 
                             :showMoreColumns="true" 
                             ref="fields">
+                            <span>
+                                模型名称：{{modelName}}
+                            </span>
+                            </my-table>
+                        </TabPane>
+                        <TabPane label="动作">
+                            <my-table 
+                            model="model-actions" 
+                            :pageSize="7" 
+                            :showMoreColumns="true" 
+                            ref="actions">
                             <span>
                                 模型名称：{{modelName}}
                             </span>
@@ -59,20 +65,6 @@
                                 模型名称：{{modelName}}
                             </span>
                             </my-table>
-                            <p style="color:blue;">事件代码：</p>
-                            <p>
-                                <Input 
-                                    type="textarea" 
-                                    v-model="scriptCode" 
-                                    readonly 
-                                    autosize
-                                    />
-                            </p>
-                        </TabPane>
-                        <TabPane label="预览">                         
-                            <my-table :model="modelName" :pageSize="7" ref="preview">
-                                <Button type="default" @click="$refs.preview.getModel()">请点击此按钮查看预览效果</Button>
-                            </my-table>
                         </TabPane>
                     </Tabs>
                 </Row>
@@ -87,7 +79,6 @@
 }
 </style>
 
-
 <script>
 export default {
     data(){
@@ -98,36 +89,12 @@ export default {
         }
     },
     methods:{
-        SaveModel(){
-            this.$refs.form.save()
-            .then(value=>{
-                this.$refs.table.refresh();
-            })
-        },
-        ApplyModel(){
-            if(!this.modelName)
-                return;
-            this.$axios.post(`/models/${this.modelName}/save-db-object`)
-            .then(value=>{
-                if(value.success){
-                    alert('保存数据库对象成功！');
-                }else{
-                    alert(value.message);
-                }
-            })
-            .catch(reason=>{
-                alert(reason.message);
-            })
-        },
         onModelRowClick(data){
             this.modelName=data['name'];
-            this.$refs.form.setValue(data);
             this.$refs.table.setRelation(this.$refs.fields,'name','model_name',data);
+            this.$refs.table.setRelation(this.$refs.actions,'name','model_name',data);
             this.$refs.table.setRelation(this.$refs.scripts,'name','model_name',data);
             this.scriptCode='';
-        },
-        onScriptlRowClick(data){
-            this.scriptCode=data['code'];
         }
     }
 }

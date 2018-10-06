@@ -9,9 +9,9 @@ import VCharts from 'v-charts'
 import screenfull from 'screenfull'
 import contentmenu from 'v-contextmenu'
 import 'v-contextmenu/dist/index.css'
-import vueJsonTreeView from 'vue-json-tree-view'
-import i18n from './i18n'
-import util from '@/libs/util.js'
+//import vueJsonTreeView from 'vue-json-tree-view'
+//import i18n from './i18n'
+//import util from '@/libs/util.js'
 import store from '@/store/index'
 import '@/assets/svg-icons'
 import '@/wisemis-components'
@@ -23,19 +23,20 @@ Vue.use(iView);
 
 
 //import '@/mock'
-import pluginLog from '@/plugin/log'
-import pluginError from '@/plugin/error'
-import pluginImport from '@/plugin/import'
-import pluginExport from '@/plugin/export'
-import pluginOpen from '@/plugin/open'
+//import pluginLog from '@/plugin/log'
+//import pluginError from '@/plugin/error'
+//import pluginImport from '@/plugin/import'
+//import pluginExport from '@/plugin/export'
+//import pluginOpen from '@/plugin/open'
 
 Vue.config.debug=true;
 
 import axios from '@/plugin/axios'
 Vue.prototype.$axios=axios
 
-//事件总线
-Vue.prototype.$eventhub=new Vue();
+import GetMethods from './utils/get-methods';
+var methods=GetMethods();
+Vue.prototype.$methods=methods;
 
 // 菜单和路由设置
 import router from './router'
@@ -46,12 +47,12 @@ import frameInRoutes from '@/router/my-router-index'
 Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(contentmenu)
-Vue.use(pluginLog)
+//Vue.use(pluginLog)
 //Vue.use(pluginError)
-Vue.use(pluginImport)
-Vue.use(pluginExport)
-Vue.use(pluginOpen)
-Vue.use(vueJsonTreeView)
+//Vue.use(pluginImport)
+//Vue.use(pluginExport)
+//Vue.use(pluginOpen)
+//Vue.use(vueJsonTreeView)
 
 Vue.config.productionTip = false
 

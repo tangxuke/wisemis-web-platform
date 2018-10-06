@@ -40,6 +40,12 @@ export default [
                 name:'models-form-designer',
                 component:()=>import('@/pages/models/form-designer'),
                 meta:{...meta,title:'表单设计器'}
+            },
+            {
+                path:'preview/:model',
+                name:'models-preview',
+                component:()=>import('@/pages/models/preview'),
+                meta:{...meta,title:'预览模型'}
             }
         ]
     }

@@ -4,6 +4,7 @@
             <my-field-control 
               v-for="field in fields" 
               :key="field.Name"
+              v-if="field.ShowInForm"
               :oFieldObject="field"
               :ref="field.Name"
               ></my-field-control>
@@ -27,45 +28,36 @@ export default {
   },
   methods: {
     /**
+     * 表格事件
+     * @param {{type:string,params:string,code:string}[]} events
+     */
+    setEvents(events){
+      if(!Array.isArray(events))
+        return;
+      events.forEach(ev=>{
+        var params=ev.params || '';
+        var aParams=params.split(',');
+        var fn=new Function(...aParams,ev.code);
+
+        this.$on(ev.type,(...aParams)=>{
+          fn.call(this,...aParams);
+        });
+      });
+    },
+    /**
      * 检查数据有效性
      * @returns {boolean}
      */
     checkValid(){
-      var oField=this.fields.find(item=>{
-        return item.IsKey && !item.Value;
+      var oField=this.fields.filter(item=>{
+        return (item.IsInsert || item.IsUpdate || item.IsKey) && item.ShowInForm;
+      }).find(item=>{
+        return !item.control.checkValid();
       });
       if(oField){
-        alert(oField.Title+'不能为空！');
-        oField.control.setFocus();
         return false;
       }
       return true;
-    },
-    /**
-     * 设置焦点
-     * @param {string} field 字段名称
-     */
-    setFocus(field) {
-      var el = this.$refs[field][0];
-      el.setFocus();
-    },
-    /**
-     * 设置字段值
-     * @param {string} field 字段名称
-     * @param {any} value 字段值
-     */
-    setFieldValue(field, value) {
-      var el = this.$refs[field][0];
-      el.$emit("input", value);
-    },
-    /**
-     * 获取字段值
-     * @param {string} field 字段名称
-     * @returns {any}
-     */
-    getFieldValue(field) {
-      var el = this.$refs[field][0];
-      return el.value;
     },
     /**
      * 查询数据库
@@ -102,7 +94,7 @@ export default {
         return;
       }
       this.$axios
-        .post(`/models/${this.model}/form`)
+        .post(`/models/${this.model}`)
         .then(value => {
           if (value.success) {
             this.database=value.result.Database;
@@ -114,6 +106,8 @@ export default {
               if (item.ColSpan > 24) item.ColSpan = 24;
               return item;
             });
+            //设置表单事件
+            this.setEvents(value.result.FormScripts);
           } else {
             alert(value.message);
           }
@@ -143,15 +137,23 @@ export default {
           field.DefaultValue = data[item];
         }
       });
+      this.$emit('SET-DEFAULT-VALUE',data);
     },
     setValue(data) {
-      this.fields.forEach(item => {
+      this.fields.filter(item=>{
+        return Object.keys(data).includes(item.Name);
+      }).forEach(item => {
         var value = data[item.Name];
         item.Value = value;
         item.OldValue = value;
       });
+      this.$emit('FORM-SET-VALUE',data);
     },
     save: function() {
+      if(!this.checkValid()){
+        return Promise.reject(new Error('验证数据有效性失败！'));
+      }
+      this.$emit('ON-SAVE-BEFORE')
       var data = {};
       this.fields.forEach(item => {
         data[item.Name] = item.Value;
@@ -163,21 +165,24 @@ export default {
           .post(`/models/${this.model}/save`, data)
           .then(value => {
             if (value.success) {
+              this.$emit('ON-SAVE-SUCCESS')
               this.$Message.success("保存成功！");
               resolve(true);
             } else {
               this.$Modal.error({
-                title: "保存失败提示",
-                content: value.message
+                title:'保存失败',
+                content:value.message
               });
+              this.$emit('ON-SAVE-FALIED',value.message)
               reject(new Error(value.message));
             }
           })
           .catch(reason => {
             this.$Modal.error({
-              title: "保存失败提示",
-              content: reason.message
-            });
+                title:'保存失败',
+                content:reason.message
+              });
+            this.$emit('ON-SAVE-FALIED',reason.message)
             reject(reason);
           });
       });

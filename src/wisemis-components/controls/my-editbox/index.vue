@@ -4,6 +4,7 @@
     v-model="oFieldObject.Value" 
     :placeholder="'请输入'+oFieldObject.Title+'...'"
     :rows="2"
+    :autosize="oFieldObject.ControlHeight===0"
     ref="control"
     />
 </template>
@@ -13,3 +14,4 @@ export default {
 }
 
 </script>
+

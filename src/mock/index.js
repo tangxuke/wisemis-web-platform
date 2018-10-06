@@ -1,3 +1,4 @@
+/*
 import Mock from 'mockjs'
 
 // 导入所有的接口
@@ -8,3 +9,4 @@ req(require.context('./api/', true, /\.js$/))
 Mock.setup({
   timeout: '300-600'
 })
+*/
