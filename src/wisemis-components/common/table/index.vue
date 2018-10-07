@@ -51,7 +51,7 @@
 			<my-modal :title="title" :width="modalWidth" @OK="onSave" :loading="true" ref="modal1">
 				<my-form :model="model" ref="form"></my-form>
 			</my-modal>
-			<my-modal title="查询" :width="modalWidth2" @OK="onQuery" ref="modal2">
+			<my-modal title="查询" :width="900" @OK="onQuery" ref="modal2">
 				<my-query :model="model" ref="query"></my-query>
 			</my-modal>
 		</Row>

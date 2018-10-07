@@ -40,13 +40,13 @@
 
 <script>  
 import VueComponent from 'vue';
-import SelectDepartmentControl from './select-department-control';
-import MyEditbox from './my-editbox';
-import MyTextbox from './my-textbox';
-import MyCheckbox from './my-checkbox';
-import MyDatePicker from './my-date-picker';
-import MySelect from './my-select';
-import MyList from './my-list';
+import SelectDepartmentControl from './form-controls/select-department-control';
+import MyEditbox from './form-controls/my-editbox';
+import MyTextbox from './form-controls/my-textbox';
+import MyCheckbox from './form-controls/my-checkbox';
+import MyDatePicker from './form-controls/my-date-picker';
+import MySelect from './form-controls/my-select';
+import MyList from './form-controls/my-list';
    
 export default {
     props:{
