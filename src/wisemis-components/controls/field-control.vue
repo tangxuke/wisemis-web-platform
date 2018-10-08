@@ -24,17 +24,6 @@
 
             </div>
         </div>
-        <my-modal :title="'编辑 - '+oFieldObject.Title" 
-            :width="600" 
-            @OK="onFinishText" 
-            ref="titleModal">
-			<Input
-                v-model="value1"
-                type="textarea"
-                :rows="15"
-                autofocus
-            />
-		</my-modal>
     </div>
 </template>
 
@@ -117,12 +106,12 @@ export default {
         openTextDialog(){
             if(typeof this.oFieldObject.Type !=='string')
                 return;
-            this.value1=this.oFieldObject.Value;
-            this.$refs.titleModal.ShowDialog();
-        },
-        onFinishText(){
-            this.oFieldObject.Value=this.value1;
-            this.setFocus();
+            this.$dialog.OpenTextDialog('编辑 - '+this.oFieldObject.Title,this.oFieldObject.Value)
+            .then(value=>{
+                this.oFieldObject.Value=value;
+                this.setFocus();
+            })
+            .catch(()=>{});
         },
         /**
          * 设置字段值

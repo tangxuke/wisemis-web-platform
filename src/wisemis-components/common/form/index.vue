@@ -59,36 +59,6 @@ export default {
       }
       return true;
     },
-    /**
-     * 查询数据库
-     * @param {string} sql 查询语句
-     * @param {any[]} params 参数数组
-     * @param {string} database 数据库，默认当前模型数据库
-     * @returns {Promise<any[]>}
-     */
-    getSqlValue(sql, params, database) {
-        if(!sql){
-            return Promise.reject(new Error('缺少查询语句！'));
-        }
-        if(!Array.isArray(params)){
-            params=[];
-        }
-        if(!database){
-            database=this.database;
-        }
-
-        var data={
-            sql,
-            params,
-            database
-        }
-        return this.$axios.post('/query',data).then(value=>{
-            if(value.success)
-                return Promise.resolve(value.result);
-            else
-                return Promise.reject(new Error(value.message));
-        });
-    },
     getModel() {
       if (!this.model) {
         return;

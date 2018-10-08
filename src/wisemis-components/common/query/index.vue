@@ -4,25 +4,31 @@
             <Col :span="8" v-for="field in fields" :key="field.Name">
                 <my-query-control :oFieldObject="field" :key="field.Name" :ref="field.Name">
                 </my-query-control>
-            </Col>
-            <Col :span="24">
+            </Col>  
+        </Row> 
+        <Row>
+            <!--Col :span="8"-->
                 <Dropdown trigger="click" @on-click="AddSearchField">
                     <Button type="dashed" icon="md-add">添加查询字段</Button>
                     <DropdownMenu slot="list">
-                        <div style="max-height:500px;width:200px;overflow: scroll;">
-                            <DropdownItem 
-                            v-for="field in fields2"
-                            :key="field.Name"
-                            :name="field.Name"
-                            >
-                            {{field.Title}}
-                            </DropdownItem>
-                        </div>
-                        
+                        <el-scrollbar wrapClass="scrollbar-wrapper">
+                            <div style="max-height:500px;width:200px;">
+                                <DropdownItem 
+                                v-for="field in fields2"
+                                :key="field.Name"
+                                :name="field.Name"
+                                >
+                                {{field.Title}}
+                                </DropdownItem>
+                            </div>
+                        </el-scrollbar>
                     </DropdownMenu>
                 </Dropdown>
-            </Col>
-        </Row>   
+            <!--/Col>
+            <Col :span="8"-->
+                <Button type="dashed" icon="md-add" style="margin-left:10px;" @click="openTextDialog">添加自定义条件</Button>
+            <!--/Col-->
+        </Row> 
     </Form>
 </template>
 
@@ -55,6 +61,16 @@ export default {
       }
   },
   methods: {
+      /**打开文本对话框 */
+        openTextDialog(){
+            this.$dialog.OpenTextDialog('添加自定义条件')
+            .then(value=>{
+                alert(value);
+            })
+            .catch(()=>{
+
+            });
+        },
       /**
        * 添加查询字段
        * @param {string} name 字段名称
