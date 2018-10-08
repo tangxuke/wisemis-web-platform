@@ -63,7 +63,7 @@ export default {
   methods: {
       /**打开文本对话框 */
         openTextDialog(){
-            this.$dialog.OpenTextDialog('添加自定义条件')
+            this.$dialogs.OpenTextDialog('添加自定义条件')
             .then(value=>{
                 alert(value);
             })

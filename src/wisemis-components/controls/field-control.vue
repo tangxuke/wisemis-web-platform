@@ -106,7 +106,7 @@ export default {
         openTextDialog(){
             if(typeof this.oFieldObject.Type !=='string')
                 return;
-            this.$dialog.OpenTextDialog('编辑 - '+this.oFieldObject.Title,this.oFieldObject.Value)
+            this.$dialogs.OpenTextDialog('编辑 - '+this.oFieldObject.Title,this.oFieldObject.Value)
             .then(value=>{
                 this.oFieldObject.Value=value;
                 this.setFocus();

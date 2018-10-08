@@ -1,6 +1,10 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
+
+import axios from '@/plugin/axios'
+Vue.prototype.$axios=axios
+
 // flex.css
 import 'flex.css'
 import ElementUI from 'element-ui'
@@ -30,13 +34,6 @@ Vue.use(iView);
 //import pluginOpen from '@/plugin/open'
 
 Vue.config.debug=true;
-
-import axios from '@/plugin/axios'
-Vue.prototype.$axios=axios
-
-import GetMethods from './utils/get-methods';
-var methods=GetMethods();
-Vue.prototype.$methods=methods;
 
 // 菜单和路由设置
 import router from './router'
