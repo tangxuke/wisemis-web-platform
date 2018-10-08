@@ -59,7 +59,6 @@
                             model="model-scripts"
                             :pageSize="7" 
                             :showMoreColumns="true" 
-                            @ON-ROW-CLICK="onScriptlRowClick"
                             ref="scripts">
                             <span>
                                 模型名称：{{modelName}}

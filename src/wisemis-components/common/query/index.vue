@@ -1,58 +1,96 @@
 <template>
     <Form is="Form" :label-width="80">
-        <Row> 
-            <Col  v-for="field in fields" :span="field.ColSpan" :key="field.Title">
-                <FormItem :label="field.Title">
-                    <div :is="field.ControlType"  v-model="field.Value" :placeholder="field.PlaceHolder">
-                        <div is="Option" v-for="item in field.Options" :value="item.value" :key="item.value">{{ item.label }}</div>
-                    </div>
-                </FormItem>
+        <Row>
+            <Col :span="8" v-for="field in fields" :key="field.Name">
+                <my-query-control :oFieldObject="field" :key="field.Name" :ref="field.Name">
+                </my-query-control>
             </Col>
-        </Row>
+            <Col :span="24">
+                <Dropdown trigger="click" @on-click="AddSearchField">
+                    <Button type="dashed" icon="md-add">添加查询字段</Button>
+                    <DropdownMenu slot="list">
+                        <div style="max-height:500px;width:200px;overflow: scroll;">
+                            <DropdownItem 
+                            v-for="field in fields2"
+                            :key="field.Name"
+                            :name="field.Name"
+                            >
+                            {{field.Title}}
+                            </DropdownItem>
+                        </div>
+                        
+                    </DropdownMenu>
+                </Dropdown>
+            </Col>
+        </Row>   
     </Form>
 </template>
 
 <script>
+import MyQueryControl from "@/wisemis-components/controls/query-control";
 export default {
-    props:['model'],
-    data(){
-        return {
-            fields:[]
-        }
-    },
-    methods:{
+  props: ["model"],
+  components: {
+    "my-query-control": MyQueryControl
+  },
+  data() {
+    return {
+      oModelObject:{}
+    };
+  },
+  computed:{
+      fields(){
+        if(!Array.isArray(this.oModelObject.Fields))
+            return [];
+        return this.oModelObject.Fields.filter(item=>{
+            return item.SearchField;
+        });
+      },
+      fields2(){
+        if(!Array.isArray(this.oModelObject.Fields))
+            return [];
+        return this.oModelObject.Fields.filter(item=>{
+            return !item.SearchField;
+        });
+      }
+  },
+  methods: {
+      /**
+       * 添加查询字段
+       * @param {string} name 字段名称
+       */
+      AddSearchField(name){
+          var oField=this.oModelObject.Fields.find(item=>{
+              return item.Name===name;
+          });
+          if(oField){
+              oField.SearchField=true;
+          }
+      },
         query(){
-            const data={};
-            this.fields.filter(item=>{
-                return item.Value.length>0;
-            }).forEach(element => {
-                data[element.Name]=element.Value;
-            });
-
-            return {query:data};
+            var where=[];
+            for(var key in this.$refs){
+                var searchExpr=this.$refs[key][0].getSearchExpr();
+                where.push(searchExpr);
+            }
+            return {query:where};
         },
         clear(){
             this.fields.forEach(item=>{
                 item.Value=item.DefaultValue;
             })
         },
-        getModel(){
-            if(!this.model)
-                return;
-            this.$axios.post(`/models/${this.model}/query`)
-            .then(value=>{
-                if(value.success){
-                    this.fields=value.result.Fields.map(item=>{
-                        item.ColSpan=24/value.result.ColumnCount*item.ColSpan;
-                        item.Value=item.DefaultValue;
-                        return item;
-                    });
-                }
-            })
+    getModel() {
+      if (!this.model) return;
+      this.$axios.post(`/models/${this.model}`).then(value => {
+        if (value.success) {
+            this.oModelObject=value.result;
         }
-    },
-    mounted(){
-        this.getModel();
+      });
     }
-}
+  },
+  mounted() {
+    this.getModel();
+  }
+};
 </script>
