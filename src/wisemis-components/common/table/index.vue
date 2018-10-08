@@ -10,15 +10,28 @@
 				<Button type="default" @click="refresh">刷新</Button>
 			</ButtonGroup>
       <ButtonGroup style="margin:3px 10px;">
-				<Button
-          v-for="action in actions"
-          :key="action.Action"
-          v-if="actionState[action.Action].visible"
-          :disabled="!actionState[action.Action].enable"
-          @click="doAction(action.Action)"
-          v-html="actionState[action.Action].title"
-        >
-        </Button>
+        <template v-for="action in actions">
+          <template v-if="action.Remark">
+            <Tooltip :key="action.Action" :content="action.Remark">
+              <Button
+              v-if="actionState[action.Action].visible"
+              :disabled="!actionState[action.Action].enable"
+              @click="doAction(action.Action)"
+              v-html="actionState[action.Action].title"
+              />
+            </Tooltip>
+          </template>
+          <template v-else>
+            <Button
+              :key="action.Action"
+              v-if="actionState[action.Action].visible"
+              :disabled="!actionState[action.Action].enable"
+              @click="doAction(action.Action)"
+              v-html="actionState[action.Action].title"
+              />
+          </template>
+        </template>
+				
 			</ButtonGroup>
 			<slot></slot>
 		</Row>

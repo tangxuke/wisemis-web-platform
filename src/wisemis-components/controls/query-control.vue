@@ -1,6 +1,6 @@
 <template>
     <FormItem
-        :label-width="80"
+        :label-width="100"
         :label="oFieldObject.Title" 
         >
         <div :is="SearchControlType" :oFieldObject="oFieldObject" ref="field" ></div>

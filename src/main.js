@@ -59,7 +59,7 @@ Vue.config.productionTip = false
 Vue.prototype.$env = process.env.NODE_ENV
 Vue.prototype.$baseUrl = process.env.BASE_URL
 
-new Vue({
+window.myVue=new Vue({
   router,
   store,
   //i18n,
