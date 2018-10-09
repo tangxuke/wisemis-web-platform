@@ -51,6 +51,22 @@ export default {
             }else{
                 return {height:'unset'};
             }
+        },
+        Value:{
+            get(){
+                return this.oFieldObject.Value;
+            },
+            set(newVal){
+                this.oFieldObject.Value=newVal;
+            }
+        },
+        Visible:{
+            get(){
+                return this.oFieldObject.ShowInForm;
+            },
+            set(newVal){
+                this.oFieldObject.ShowInForm=newVal;
+            }
         }
     },
     components:{
@@ -61,11 +77,6 @@ export default {
         'my-date-picker':MyDatePicker,
         'my-select':MySelect,
         'my-list':MyList
-    },
-    data(){
-        return {
-            value1:''
-        }
     },
     methods:{
         /**
@@ -155,11 +166,13 @@ export default {
             var params=ev.params || '';
             var aParams=params.split(',');
             var fn=new Function(...aParams,ev.code); 
+            //注册字段内核控件的事件处理程序
             var control=this.getCoreFieldControl();
             control.$on(ev.type,(...aParams)=>{
                 fn.call(this.oFieldObject.thisform,...aParams);
             });
         });
+
     }
 }
 </script>

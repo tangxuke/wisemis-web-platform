@@ -1,61 +1,53 @@
 <template>
     <d2-container>
         <Row>
-            <Col :span="6">
-                <Form :labelWidth="80">
-                    <Row>
-                        <FormItem label="列数">
-                            <Input v-model="cols"/>                       
-                        </FormItem>
-                    </Row>
-                    <Row v-for="n in theCols" :key="'_'+n">
-                        <Button long style="margin-top:3px;" @click="addControl(n)">添加跨{{n}}列按钮</Button>
-                    </Row>
-                    
-                </Form>
-            </Col>
-            <Col :span="18">
-                <Form>
-                    <Row>
-                        <Col v-for="(control,index) in controls" 
-                            :key="'control'+index"
-                            :span="control.span"
-                            >
-                            <Button long>{{control.title}}</control></Button>
-                        </Col>
-                    </Row>
-                </Form>
-            </Col>
+            <Button type="dashed" @click="writeCode">代码...</Button>
+        </Row>
+        <Row>
+            <div is="input" id="demo">
+            </div>
         </Row>
     </d2-container>
 </template>
 
 <script>
+import Vue from 'vue';
+
 export default {
     data(){
         return {
-            cols:1,
-            controls:[]
+            code:''
         }
     },
     methods:{
-        addControl(span){
-            this.controls.push({
-                span:span*this.unitCols,
-                title:`这是一个${span}列按钮`
-            })
-        }
-    },
-    computed:{
-        theCols(){
-            var aCols=[];
-            for(var i=0;i<this.cols;i++){
-                aCols.push(i+1);
-            }
-            return aCols;
+        writeCode(){
+            this.$dialogs.OpenTextDialog('编辑代码',this.code)
+                .then(value=>{
+                    this.code=value;
+                    var element=JSON.parse(value);
+                    console.log(element);
+                    var instance=new Vue({
+                        render(h){
+                            return this.createMyElement(h,element);
+                        }
+                    });
+                    var component=instance.$mount();
+                    document.getElementById('demo').appendChild(component.$el);
+                })
+                .catch(()=>{});
         },
-        unitCols(){
-            return Math.ceil(1.00*24/this.cols);
+        /**
+         * 渲染函数
+         * @param {Function} h 渲染函数
+         * @param {{tag:string,props:object,children:{tag,props,children}[]}} e 需渲染的数据对象
+         */
+        createMyElement(h,e){
+            if(Array.isArray(e.children) && Array.from(e.children).length>0)
+                return h(e.tag,{props:{...e.props}},[...e.children.map(item=>{
+                    return createMyElement(h,item);
+                })]);
+            else
+                return h(e.tag,{props:{...e.props}});
         }
     }
 }

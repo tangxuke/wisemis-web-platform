@@ -4,7 +4,7 @@
             <my-field-control 
               v-for="field in fields" 
               :key="field.Name"
-              v-if="field.ShowInForm"
+              v-show="field.ShowInForm"
               :oFieldObject="field"
               :ref="field.Name"
               ></my-field-control>

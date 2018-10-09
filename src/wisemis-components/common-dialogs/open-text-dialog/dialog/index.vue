@@ -1,17 +1,23 @@
 <template>
-    <Input 
-    type="textarea" 
-    v-model="oFieldObject.Value" 
-    :placeholder="'请输入'+oFieldObject.Title+'...'"
-    :rows="1"
-    :autosize="oFieldObject.ControlHeight===0"
-    ref="control"
-    @on-keydown="onKeyDown"
-    />
+    <my-modal :title="title || '文本编辑器'" :width="600" @OK="onOK" @CANCEL="onCancel" ref="dialog">
+        <Input 
+            type="textarea" 
+            v-model="value1" 
+            :rows="15"
+            ref="control"
+            @on-keydown="onKeyDown"
+            />
+    </my-modal>
 </template>
+
 <script>
 export default {
-    props:['oFieldObject'],
+    props:['title','value'],
+    data(){
+        return {
+            value1:''
+        }
+    },
     methods:{
         /**
          * 按键事件，用于控制Tab键缩进
@@ -28,9 +34,16 @@ export default {
                 input.focus();
                 event.preventDefault();
             }
+        },
+        onOK(){
+            this.$emit('ON-OK',this.value1);
+        },
+        onCancel(){
+            this.$emit('ON-CANCEL');
         }
+    },
+    created(){
+        this.value1=this.value;
     }
 }
-
 </script>
-

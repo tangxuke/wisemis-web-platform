@@ -1,61 +1,44 @@
+import MyOpenTextDialog from './dialog';
+
 import Vue from 'vue';
 
 /**
- * 打开文本对话框
+ * 选择数据对话框
  * @param {string} title 标题
- * @param {string} str 初始值
+ * @param {string} value 初始值
  * @returns {Promise<string>}
  */
-function openText(title,str){
-    return new Promise((resolve,reject)=>{
+function OpenTextDialog(title,value){
+
+    var p=new Promise(function(resolve,reject){
         var instance=new Vue({
-            data(){
-                return {
-                    value:str
-                }
-            },
-            methods:{
-                OK(){
-                    resolve(this.value);
-                },
-                CANCEL(){
-                    reject();
-                }
+            components:{
+                'my-open-text-dialog':MyOpenTextDialog
             },
             render(h){
-                var _this=this;
-                return h('Modal',{
+                return h('my-open-text-dialog',{
                     props:{
-                        title:title,
-                        width:600,
-                        value:true
+                        title,value
                     },
                     on:{
-                        'on-ok':function(){
-                            _this.OK();
+                        'ON-OK':(value)=>{
+                            resolve(value);
                         },
-                        'on-cancel':function(){
-                            _this.CANCEL();
+                        'ON-CANCEL':()=>{
+                            reject();
                         }
                     }
-                },[h('Input',{
-                    props:{
-                        value:this.value,
-                        type:'textarea',
-                        rows:15
-                    },
-                    on:{
-                        input(event){
-                            _this.value=event;
-                        }
-                    }
-                })]);
+                });
             }
         });
 
         var component=instance.$mount();
+        component.$children[0].$children[0].ShowDialog();
         document.body.appendChild(component.$el);
     });
+
+    return p;
 }
 
-export default openText;
+export default OpenTextDialog;
+
