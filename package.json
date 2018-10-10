@@ -28,6 +28,7 @@
     "iview": "^3.0.0",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
+    "json-format": "^1.0.1",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "lodash.clonedeep": "^4.5.0",

@@ -4,8 +4,9 @@
             v-for="item in options" 
             :key="item.value"
             :value="item.value"
+            :label="item.label"
+            v-html="item.label || item.value"
             >
-            {{item.label}}
             </Option>
     </Select>
 </template>
@@ -13,16 +14,21 @@
 <script>
 export default {
     props:['oFieldObject'],
-    computed:{
-        options(){
-            if(!this.oFieldObject.DataSourceType || !this.oFieldObject.DataSource)
-                return [];
-            switch(this.oFieldObject.DataSourceType){
+    data(){
+        return {
+            options:[]
+        }
+    },
+    methods:{
+        getOptions(type,source){
+            if(!type || !source)
+                return Promise.resolve([]);
+            
+            switch(type){
                 case 'NONE':
-                    return [];
+                    return Promise.resolve([]);
                 case 'LIST':
-                    return this.oFieldObject
-                    .DataSource
+                    var options=source
                     .replace(/\\\:/g,'{#1}')
                     .replace(/\\\,/g,'{#2}')
                     .split(',')
@@ -36,14 +42,39 @@ export default {
                         else
                             return {label:a[0],value:a[1]};
                     });
-                case 'QUERY':
-                    return [];
+
+                    return Promise.resolve(options);
+                case 'SQL':
+                    return this.$methods.getSqlResults(source,[],'wisemis')
+                    .then(value=>{
+                        var options=Array.from(value.results);
+                        return options;
+                    })
+                    .catch(()=>{
+                        return [];
+                    });
                 case 'SYSTEM':
-                    return []
+                    return this.$methods.getSqlResultsForRow('select * from model_data_sources where name=?',[source],'wisemis')
+                        .then(row=>{
+                            return this.getOptions(row.type,row.code)
+                                    .then(options=>{
+                                        return options;
+                                    })
+                        });
                 default:
-                    return [];
+                    return Promise.resolve([]);
             }
         }
+    },
+    mounted() {
+        this.getOptions(this.oFieldObject.DataSourceType,this.oFieldObject.DataSource)
+            .then(options=>{
+                console.log(options);
+                this.options=options;
+            })
+            .catch(()=>{
+                this.options=[];
+            });
     }
 }
 </script>
