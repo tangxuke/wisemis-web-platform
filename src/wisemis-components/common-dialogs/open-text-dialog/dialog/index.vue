@@ -3,7 +3,8 @@
         <Input 
             type="textarea" 
             v-model="value1" 
-            :rows="15"
+            :rows="10"
+            autofocus
             ref="control"
             @on-keydown="onKeyDown"
             />

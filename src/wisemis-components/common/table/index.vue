@@ -12,13 +12,18 @@
       <ButtonGroup style="margin:3px 10px;">
         <template v-for="action in actions">
           <template v-if="action.Remark">
-            <Tooltip :key="action.Action" :content="action.Remark">
+            <Tooltip :key="action.Action"  :delay="1000"  :max-width="500">
               <Button
               v-if="actionState[action.Action].visible"
               :disabled="!actionState[action.Action].enable"
               @click="doAction(action.Action)"
               v-html="actionState[action.Action].title"
               />
+              <div slot="content">
+                <div>
+{{action.Remark}}
+                </div>
+              </div>
             </Tooltip>
           </template>
           <template v-else>
