@@ -19,8 +19,7 @@ Vue.prototype.$methods = {};
  */
 var body = {
     sql: 'select * from methods',
-    params: [],
-    database: 'wisemis'
+    params: []
 };
 
 axios.post('/query', body)

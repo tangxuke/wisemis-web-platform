@@ -45,7 +45,7 @@ export default {
 
                     return Promise.resolve(options);
                 case 'SQL':
-                    return this.$methods.getSqlResults(source,[],'wisemis')
+                    return this.$methods.getSqlResults(source,[])
                     .then(value=>{
                         var options=Array.from(value.results);
                         return options;
@@ -54,7 +54,7 @@ export default {
                         return [];
                     });
                 case 'SYSTEM':
-                    return this.$methods.getSqlResultsForRow('select * from model_data_sources where name=?',[source],'wisemis')
+                    return this.$methods.getSqlResultsForRow('select * from model_data_sources where name=?',[source])
                         .then(row=>{
                             return this.getOptions(row.type,row.code)
                                     .then(options=>{
