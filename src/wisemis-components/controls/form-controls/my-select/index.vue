@@ -1,5 +1,5 @@
 <template>
-    <Select v-model="oFieldObject.Value" ref="control">
+    <Select v-model="oFieldObject.Value" :transfer="true" :filterable="true" ref="control">
         <Option 
             v-for="item in options" 
             :key="item.value"
