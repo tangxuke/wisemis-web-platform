@@ -2,10 +2,7 @@
     <d2-container>
 		<Tabs>
 			<TabPane label="设计">
-
-				<Input v-model="Code" type="textarea" :rows="20"  @on-keydown="onKeyDown" ref="control"/>
-
-				<!--div style="padding: 10px;background: #f8f8f9">
+				<div style="padding: 10px;background: #f8f8f9">
 					<Row>
 							<my-render 
 								:oVue="oVue"
@@ -13,7 +10,7 @@
 							/>
 					</Row>
 					
-    			</div-->
+    			</div>
 				
 
 			</TabPane>
