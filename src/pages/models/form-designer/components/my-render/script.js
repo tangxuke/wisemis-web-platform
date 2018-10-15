@@ -8,7 +8,7 @@ export default {
             props_name:'',
             props_value:'',
             props_rowindex:-1,
-            show_all_props:false,
+            show_all_props:true,
             props_columns:[
                 {key:'type',title:'类型'},
                 {key:'name',title:'属性名',
@@ -83,7 +83,7 @@ export default {
             if(this.data1.length==0)
                 return '';
             var root=this.data1[0];
-            var code='return '+this.nodeToRender(root);
+            var code=`return ${this.nodeToRender(root)};`;
             //解析{{...}}
             return code;
         }

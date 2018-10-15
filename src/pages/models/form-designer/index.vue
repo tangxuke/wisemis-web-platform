@@ -2,18 +2,28 @@
     <d2-container>
 		<Tabs>
 			<TabPane label="设计">
-
-				<Input v-model="Code" type="textarea" :rows="20"  @on-keydown="onKeyDown" ref="control"/>
-
-				<!--div style="padding: 10px;background: #f8f8f9">
-					<Row>
+				<div style="padding: 10px;background: #f8f8f9">
+					<Tabs>
+						<TabPane label="data">
+							<my-data 
+								:oVue="oVue"
+								ref="data"
+							/>
+						</TabPane>
+						<TabPane label="computed">
+							<my-computed 
+								:oVue="oVue"
+								ref="computed"
+							/>
+						</TabPane>
+						<TabPane label="render">
 							<my-render 
 								:oVue="oVue"
 								ref="render"
 							/>
-					</Row>
-					
-    			</div-->
+						</TabPane>
+					</Tabs>
+    			</div>
 				
 
 			</TabPane>

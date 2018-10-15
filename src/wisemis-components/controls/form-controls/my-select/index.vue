@@ -69,7 +69,6 @@ export default {
     mounted() {
         this.getOptions(this.oFieldObject.DataSourceType,this.oFieldObject.DataSource)
             .then(options=>{
-                console.log(options);
                 this.options=options;
             })
             .catch(()=>{
