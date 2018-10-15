@@ -125,9 +125,12 @@ export default {
          * @param {{tag:string,isTextNode:boolean,text:string,props_data:[{type:string,name:string,value:string}],children:[{tag,isTextNode,text,props_data}]} node 节点
          */
         nodeToRender(node){
-            //文本节点
-            if(node.isTextNode)
-                return `"${node.text}"`;
+            //文本节点      
+            if(node.isTextNode){
+                var text=node.text;
+                
+                return `${text}`;
+            }
             //data
 
             var data=[];
