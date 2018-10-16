@@ -30,7 +30,10 @@
 			<Table :columns="columns" :data="oVue.computed" @on-row-click="onRowClick" />
 		</Col>
 	</Row>
+	
 </template>
+
 <script src="./script.js">
 
 </script>
+

@@ -16,7 +16,8 @@ export default {
 				data:[],
 				computed:[],
 				props:[],
-				render:[]
+				render:[],
+				htmlCode:''
 			}
 		}
 	},
@@ -46,12 +47,9 @@ export default {
 		 */
 		Preview(){
 			
-			var renderFn=new Function('h',this.$refs.render.RenderCode);
-			var dataFn=new Function(this.$refs.data.DataCode);
-			var computedObject=this.$refs.computed.ComputedCode;
+			var renderFn=new Function('h',this.$refs.render.renderCode);
 			var instance=new Vue({
-				data:dataFn.call(),
-				methods:{s:this.parseText.bind(instance)},
+				data:this.$refs.data.getData(),
 				render:renderFn
 			});
 			console.log(instance);
