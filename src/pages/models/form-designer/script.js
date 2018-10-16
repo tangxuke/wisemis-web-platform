@@ -2,45 +2,38 @@ import Vue from 'vue';
 import MyData from './components/my-data';
 import MyRender from './components/my-render';
 import MyComputed from './components/my-computed';
-import { SSL_OP_CIPHER_SERVER_PREFERENCE } from 'constants';
+import MyMethods from './components/my-methods';
+import MyWatch from './components/my-watch';
 
 export default {
 	components:{
 		'my-data':MyData,
 		'my-render':MyRender,
-		'my-computed':MyComputed
+		'my-computed':MyComputed,
+		'my-methods':MyMethods,
+		'my-watch':MyWatch  
 	},
 	data(){
 		return {
 			oVue:{
 				data:[],
 				computed:[],
+				methods:[],
 				props:[],
 				render:[],
+				watch:[],
+				mounted:'',
+				created:'',
 				htmlCode:''
 			}
 		}
 	},
 	methods:{
+		Save(){
+			alert(JSON.stringify(this.oVue))
+		},
 		selectType(type){
 			this.showType=type;
-		},
-		/**
-		 * 解析字符串，处理{{...}}表达式内容
-		 * @param {string} s 待解析字符串
-		 */
-		parseText(s){
-			//计算{{...}}里面的表达式
-			while (s.indexOf('{{')>-1) {
-				var a=s.indexOf('{{');
-				var b=s.indexOf('}}',a);
-				var e=s.substr(a+2,b-a-2);
-				var s1=s.substr(0,a);
-				var s2=s.substr(b+2);
-				s=s1+eval(e)+s2;
-			}
-
-			return s;
 		},
 		/**
 		 * 预览效果
@@ -50,7 +43,12 @@ export default {
 			var renderFn=new Function('h',this.$refs.render.renderCode);
 			var instance=new Vue({
 				data:this.$refs.data.getData(),
-				render:renderFn
+				computed:this.$refs.computed.getComputedObject(),
+				methods:this.$refs.methods.getMethods(),
+				render:renderFn,
+				mounted:new Function(this.oVue.mounted),
+				created:new Function(this.oVue.created)
+				//TODO:watch
 			});
 			console.log(instance);
 			var component=instance.$mount();

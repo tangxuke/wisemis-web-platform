@@ -4,7 +4,7 @@
             Render类型：
             <RadioGroup v-model="renderType">
                 <Radio label="tree">标签树</Radio>
-                <Radio label="html">模板代码</Radio>
+                <Radio label="html" disabled>模板代码</Radio>
             </RadioGroup>
         </span>
         <div style="margin-top:10px;">

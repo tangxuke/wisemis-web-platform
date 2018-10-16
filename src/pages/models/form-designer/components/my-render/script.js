@@ -132,7 +132,7 @@ export default {
             var _props = props_data.filter(item => {
                 return item.type === type;
             }).map(item => {
-                return item.name + ':' + item.value;
+                return `'`+item.name + `':` + item.value;
             }).join(',');
             if (_props.length > 0) {
                 _props = type + ':{' + _props + '}';
@@ -173,7 +173,16 @@ export default {
         nodeToRender(node) {
             //文本节点      
             if (node.isTextNode) {
-                return node.text;
+                var s='`'+node.text+'`';
+                while (s.indexOf('{{')>-1) {
+                    var a=s.indexOf('{{');
+                    var b=s.indexOf('}}',a);
+                    var e=s.substr(a+2,b-a-2);
+                    var s1=s.substr(0,a);
+                    var s2=s.substr(b+2);
+                    s=s1+"`+eval(`"+e+"`)+`"+s2;
+                }
+                return s;
             }
 
             //non-text node

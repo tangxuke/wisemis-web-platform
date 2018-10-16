@@ -5,7 +5,7 @@
         <p>
             {{v}}
         </p>
-        <Button @click="v='ddd'">test</Button>
+        <base-editbox v-model="v"></base-editbox>
     </d2-container>
 </template>
 
@@ -21,6 +21,14 @@ export default {
         return {
             v:'test'
         }
-    }
+    },
+    watch:{
+        v(newValue,oldValue){
+            console.log(newValue,oldValue);
+        }
+    },
+    mounted() {
+        console.log(this);
+    },
 }
 </script>

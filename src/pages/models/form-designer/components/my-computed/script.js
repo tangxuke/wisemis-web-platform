@@ -50,7 +50,10 @@ export default {
 								},
 								on: {
 									click() {
-										_this.data1.splice(index, 1);
+										_this.oVue.computed.splice(index, 1);
+										setTimeout(() => {
+											_this.clear();
+										}, 100);
 									}
 								}
 							},
@@ -61,22 +64,19 @@ export default {
 			],
 		};
 	},
-	computed: {
-		ComputedCode() {
-			var computedObj=new Object();
-			
+	methods: {
+		getComputedObject(){
+			var computed={};
 			this.oVue.computed.forEach(item=>{
 				if (item.set_value && this.get_value) {
-					computedObj.constructor.prototype[item.name]={get:new Function(item.get_value),set:new Function('newValue',item.set_value)};
+					computed[item.name]={get:new Function(item.get_value),set:new Function('newValue',item.set_value)};
 				}else{
-					computedObj.constructor.prototype[item.name]=new Function(item.get_value);
+					computed[item.name]=new Function(item.get_value);
 				}
-			})
+			});
 
-			return computedObj;
-		}
-	},
-	methods: {
+			return computed;
+		},
 		/**
          * 按键事件，用于控制Tab键缩进
          * @param {KeyboardEvent} event

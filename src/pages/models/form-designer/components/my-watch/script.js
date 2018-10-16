@@ -2,14 +2,15 @@ export default {
 	props: ['oVue'],
 	data() {
 		return {
-			name: "",
-			value: "",
+            name: "",
+            params:"newValue,oldValue",
+			code: "",
 			remark: "",
 			index: -1,
 			columns: [
 				{
 					key: "name",
-					title: "变量名称",
+					title: "变量名",
 					width: 100,
 					render: (h, { row, column, index }) => {
 						return h(
@@ -22,10 +23,11 @@ export default {
 							row.name
 						);
 					}
-				},
+                },
+                {key:'params',title:'参数'},
 				{
-					key: "value",
-					title: "变量值",
+					key: "code",
+					title: "代码",
 					ellipsis: true,
 					tooltip:true
 				},
@@ -43,7 +45,7 @@ export default {
 								},
 								on: {
 									click() {
-										_this.oVue.data.splice(index, 1);
+										_this.oVue.methods.splice(index, 1);
 										setTimeout(() => {
 											_this.clear();
 										}, 100);
@@ -54,48 +56,44 @@ export default {
 						);
 					}
 				}
-			],
-			data1: []
+			]
 		};
 	},
-	computed: {
-		DataCode() {
-
-			var _data = this.oVue.data.map(item => {
-				return item.name + ':' + item.value;
-			}).join(',')
-			return 'return {' + _data + '}';
-		}
-	},
 	methods: {
-		getData() {
-			var data = new Object(null);
-			this.oVue.data.forEach(item => {
-				data[item.name]=eval(item.value);
+		getWatch() {
+			var watch = new Object(null);
+			this.oVue.watch.forEach(item => {
+				var params=item.params || '';
+				var aParams=params.split(',');
+				watch[item.name]=new Function(...aParams,item.code);
 			})
-			return data;
+			return watch;
 		},
 		clear() {
 			this.name = "";
-			this.value = "";
+			this.params="newValue,oldValue";
+			this.code = "";
 			this.remark = "";
 			this.index = -1;
 		},
 		onRowClick(row, index) {
 			this.name = row.name;
-			this.value = row.value;
+			this.params=row.params;
+			this.code = row.code;
 			this.remark = row.remark;
 			this.index = index;
 		},
 		Apply() {
 			if (this.index > -1) {
-				this.oVue.data[this.index].name = this.name;
-				this.oVue.data[this.index].value = this.value;
-				this.oVue.data[this.index].remark = this.remark;
+				this.oVue.methods[this.index].name = this.name;
+				this.oVue.methods[this.index].params = this.params;
+				this.oVue.methods[this.index].code = this.code;
+				this.oVue.methods[this.index].remark = this.remark;
 			} else {
-				this.oVue.data.push({
+				this.oVue.methods.push({
 					name: this.name,
-					value: this.value,
+					params:this.params,
+					code: this.code,
 					remark: this.remark
 				});
 			}
