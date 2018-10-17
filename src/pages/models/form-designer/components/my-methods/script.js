@@ -60,6 +60,15 @@ export default {
 		};
 	},
 	methods: {
+		/**获得方法代码 */
+		getMethodsCode(){
+			var methods = new Object(null);
+			this.oVue.methods.forEach(item => {
+				var aParams=(item.params || '').split(',');
+				methods[item.name]=[...aParams,item.code];
+			})
+			return methods;
+		},
 		getMethods() {
 			var methods = new Object(null);
 			this.oVue.methods.forEach(item => {

@@ -97,8 +97,11 @@ export default {
         createRenderCode() {
             var code = '';
             if (this.renderType === 'tree') {
-                if (this.data1.length == 0)
-                    return '';
+                if (this.data1.length == 0){
+                    this.renderCode='';
+                    return;
+                }
+
                 var root = this.data1[0];
                 this.renderCode = `return ${this.nodeToRender(root)};`;
             } else {

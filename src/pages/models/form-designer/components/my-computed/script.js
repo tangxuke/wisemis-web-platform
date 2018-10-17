@@ -65,6 +65,19 @@ export default {
 		};
 	},
 	methods: {
+		/**获取computed代码 */
+		getComputedCode(){
+			var computed={};
+			this.oVue.computed.forEach(item=>{
+				if (item.set_value && item.get_value) {
+					computed[item.name]={get:item.get_value,set:['newValue',item.set_value]};
+				}else{
+					computed[item.name]=item.get_value;
+				}
+			});
+
+			return computed;
+		},
 		getComputedObject(){
 			var computed={};
 			this.oVue.computed.forEach(item=>{

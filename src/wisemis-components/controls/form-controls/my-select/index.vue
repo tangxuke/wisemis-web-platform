@@ -19,6 +19,11 @@ export default {
             options:[]
         }
     },
+    computed:{
+        DataSource(){
+            return this.oFieldObject.DataSource;
+        }
+    },
     methods:{
         getOptions(type,source){
             if(!type || !source)
@@ -64,16 +69,24 @@ export default {
                 default:
                     return Promise.resolve([]);
             }
-        }
-    },
-    mounted() {
-        this.getOptions(this.oFieldObject.DataSourceType,this.oFieldObject.DataSource)
+        },
+        refreshOptions(){
+            this.getOptions(this.oFieldObject.DataSourceType,this.oFieldObject.DataSource)
             .then(options=>{
                 this.options=options;
             })
             .catch(()=>{
                 this.options=[];
             });
+        }
+    },
+    mounted() {
+        this.refreshOptions();
+    },
+    watch:{
+        DataSource(){
+            this.refreshOptions();
+        }
     }
 }
 </script>

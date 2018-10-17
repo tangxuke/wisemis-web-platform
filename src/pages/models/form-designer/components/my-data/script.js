@@ -58,21 +58,21 @@ export default {
 			data1: []
 		};
 	},
-	computed: {
-		DataCode() {
-
-			var _data = this.oVue.data.map(item => {
-				return item.name + ':' + item.value;
-			}).join(',')
-			return 'return {' + _data + '}';
-		}
-	},
 	methods: {
 		getData() {
 			var data = new Object(null);
 			this.oVue.data.forEach(item => {
 				data[item.name]=eval(item.value);
 			})
+			return data;
+		},
+		/**获取data代码 */
+		getDataCode(){
+			var data = 'return {';
+			data+=this.oVue.data.map(item=>{
+				return item.name+':'+item.value;
+			}).join(',');
+			data+='}';
 			return data;
 		},
 		clear() {

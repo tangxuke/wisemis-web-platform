@@ -40,4 +40,3 @@ axios.post('/query', body)
     .catch(reason => {
         console.log(reason);
     });
-

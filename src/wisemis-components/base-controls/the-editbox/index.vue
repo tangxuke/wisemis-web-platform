@@ -45,5 +45,10 @@ export default {
     created() {
         this.value1=this.value;
     },
+    watch:{
+        value(){
+            this.value1=this.value;
+        }
+    }
 }
 </script>
