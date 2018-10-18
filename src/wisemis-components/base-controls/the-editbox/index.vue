@@ -1,5 +1,7 @@
 <template>
-    <Input type="textarea" v-model="value1" :placeholder="placeholder" :rows="rows" ref="control" @on-keydown="onKeyDown" @on-change="onChange"/>
+    <div is="Input" type="text" v-model="value1" :placeholder="placeholder" :rows="rows" ref="control" @on-keydown="onKeyDown" @on-change="onChange"  style="width: auto">
+        <Icon type="ios-add-circle-outline" slot="suffix" @click="onZoom" />
+    </div>
 </template>
 
 <script>
@@ -22,6 +24,15 @@ export default {
         }
     },
     methods:{
+        /**打开文本对话框 */
+        onZoom(){
+            this.$dialogs.OpenTextDialog('编辑',this.value1)
+            .then(value=>{
+                this.value1=value;
+                this.$emit('input',this.value1);
+            })
+            .catch(()=>{});
+        },
         onChange(){
             this.$emit('input',this.value1);
         },

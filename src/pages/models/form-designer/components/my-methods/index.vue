@@ -9,7 +9,7 @@
 					<Input v-model="params"/>
 				</FormItem>
 				<FormItem label="方法代码" required>
-					<Input v-model="code" type="textarea" :rows="10"/>
+					<base-editbox v-model="code" type="textarea" :rows="10"/>
 				</FormItem>
 				<FormItem label="备注">
 					<Input v-model="remark"/>

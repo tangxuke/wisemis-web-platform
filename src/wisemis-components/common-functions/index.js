@@ -39,12 +39,12 @@ var result=axios.post('/query', body)
             return Promise.resolve(true);
         }else{
             console.log(value.message);
-            return Promise.reject(value.message);
+            return Promise.resolve(value.message);
         }
     })
     .catch(reason => {
         console.log(reason.message);
-        return Promise.reject(reason.message);
+        return Promise.resolve(reason.message);
     });
 
 

@@ -66,7 +66,7 @@
                                             <FormItem label="属性名">
                                                 <Input v-model="props_name"/>
                                             </FormItem>
-                                            <FormItem label="属性值"><Input type="textarea" v-model="props_value" autosize @on-keydown="onKeyDown" ref="control"/></FormItem>
+                                            <FormItem label="属性值"><base-editbox type="textarea" v-model="props_value" ref="control"/></FormItem>
                                             <FormItem>
                                                 <Button type="success" @click="ApplyProp">确定</Button>
                                                 <Button style="margin-left:5px;" @click="ClearProp">清除</Button>

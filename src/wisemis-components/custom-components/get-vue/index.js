@@ -23,9 +23,11 @@ function GetVueFromJsonObject(oVueObject)
     });
     var render=new Function(...oVueObject.render);
     var props=oVueObject.props.split(',');
+    var mounted=new Function(oVueObject.mounted);
+    var created=new Function(oVueObject.created);
 
     var instance={
-        data,computed,methods,render,props
+        data,computed,methods,render,props,mounted,created
     };
 
     return instance;

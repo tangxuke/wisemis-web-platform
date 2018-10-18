@@ -16,14 +16,14 @@
 import MyFieldControl from '@/wisemis-components/controls/field-control';
 
 export default {
-  props: ["model"],
+  props: ["model","column-count"],
   components:{
     'my-field-control':MyFieldControl
   },
   data() {
     return {
       fields: [],
-      database: ""
+      ColumnCount:1
     };
   },
   methods: {
@@ -67,12 +67,12 @@ export default {
         .post(`/models/${this.model}`)
         .then(value => {
           if (value.success) {
-            this.database=value.result.Database;
+            this.ColumnCount=value.result.ColumnCount;
             this.fields = value.result.Fields.map(item => {
               item.thisform=this;
               item.Value = item.DefaultValue;
               item.OldValue = item.DefaultValue;
-              item.ColSpan = (24 / value.result.ColumnCount) * item.ColSpan;
+              item.ColSpan = (24 / this.formColumnCount) * item.ColSpan;
               if (item.ColSpan > 24) item.ColSpan = 24;
               return item;
             });
@@ -164,6 +164,9 @@ export default {
   computed: {
     modelName: function() {
       return this.model;
+    },
+    formColumnCount(){
+      return this['column-count'] || this.ColumnCount;
     }
   }
 };

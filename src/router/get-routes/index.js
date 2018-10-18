@@ -66,7 +66,7 @@ function formatMenu(item) {
         name: item.name,
         path: item.path,
         filepath: item.path,
-        render: item.render,
+        render: item.render_code,
         component: null,
         redirect: null,
         meta: { ...meta, title: item.title }
