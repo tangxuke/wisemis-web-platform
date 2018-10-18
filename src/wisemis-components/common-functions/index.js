@@ -22,7 +22,7 @@ var body = {
     params: []
 };
 
-axios.post('/query', body)
+var result=axios.post('/query', body)
     .then(value => {
         if (value.success) {
             var methods={};
@@ -35,8 +35,17 @@ axios.post('/query', body)
             });
 
             Vue.prototype.$methods=methods;
+
+            return Promise.resolve(true);
+        }else{
+            console.log(value.message);
+            return Promise.reject(value.message);
         }
     })
     .catch(reason => {
-        console.log(reason);
+        console.log(reason.message);
+        return Promise.reject(reason.message);
     });
+
+
+export default result;

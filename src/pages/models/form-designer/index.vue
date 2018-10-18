@@ -23,7 +23,7 @@
 								<TabPane label="props">
 									<Form :label-width="100">
 										<FormItem label="属性列表">
-											<Input v-model="oVue.props"/>
+											<Input v-model="oVue.theProps"/>
 										</FormItem>
 									</Form>
 								</TabPane>

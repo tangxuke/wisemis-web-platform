@@ -1,6 +1,6 @@
 /**
  * 从JSON对象生成Vue实例
- * @param {{data,computed,methods,render,mounted,created}} oVueObject JSON对象
+ * @param {{data,computed,methods,render,mounted,created,props}} oVueObject JSON对象
  */
 function GetVueFromJsonObject(oVueObject)
 {
@@ -22,9 +22,10 @@ function GetVueFromJsonObject(oVueObject)
         methods[key]=new Function(...item);
     });
     var render=new Function(...oVueObject.render);
+    var props=oVueObject.props.split(',');
 
     var instance={
-        data,computed,methods,render
+        data,computed,methods,render,props
     };
 
     return instance;

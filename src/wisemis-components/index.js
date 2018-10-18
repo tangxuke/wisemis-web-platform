@@ -1,6 +1,4 @@
 import './common'
 import './business'
 import './common-dialogs'
-import './common-functions'
 import './base-controls'
-import './custom-components'

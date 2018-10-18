@@ -22,7 +22,7 @@ export default {
 				data: [],
 				computed: [],
 				methods: [],
-				props: [],
+				props: '',
 				render: [],
 				watch: [],
 				mounted: '',
@@ -123,13 +123,14 @@ export default {
 		/**获取Vue对象配置代码 */
 		getVueCode() {
 			this.$refs.render.createRenderCode();
-			var vue = { data: '', computed: '', methods: '', render: '', mounted: '', created: '' };
+			var vue = { data: '', computed: '', methods: '', render: '', mounted: '', created: '',props:'' };
 			vue.data = this.$refs.data.getDataCode();
 			vue.computed = this.$refs.computed.getComputedCode();
 			vue.methods = this.$refs.methods.getMethodsCode();
 			vue.render = ['h',this.$refs.render.renderCode];
 			vue.mounted = this.oVue.mounted;
 			vue.created = this.oVue.created;
+			vue.props = this.oVue.theProps;
 			return vue;
 			//return JSON.stringify(vue);
 		},

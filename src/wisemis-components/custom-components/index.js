@@ -9,9 +9,7 @@ var body={
     params:[]
 }
 
-var isOK=false;
-
-axios.post('/query',body)
+var result=axios.post('/query',body)
 .then(value=>{
     if(value.success){
         Array.from(value.result.results).forEach(item=>{
@@ -19,19 +17,17 @@ axios.post('/query',body)
             var oVueJsonObject=JSON.parse(item.vue_code);
             var instance=GetVueFromJson(oVueJsonObject);
             Vue.component(item.tag,instance);
-            console.log(oVueJsonObject);
-            console.log(instance);
-            
         });
-        isOK=true;
+        return Promise.resolve(true)
     }else{
         console.log(value.message);
-        isOK=true;
+        return Promise.reject(value.message);
     }
+    
 })
 .catch(reason=>{
     console.log(reason.message);
-    isOK=true;
+    return Promise.reject(reason.message);
 })
 
-console.log('NEXT');
+export default result;

@@ -6,7 +6,7 @@
             {{v}}
         </p>
         <base-editbox v-model="v"></base-editbox>
-        <test></test>
+        <test Name="model"></test>
     </d2-container>
 </template>
 
