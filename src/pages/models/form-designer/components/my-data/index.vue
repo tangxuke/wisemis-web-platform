@@ -6,7 +6,7 @@
 					<Input v-model="name"/>
 				</FormItem>
 				<FormItem label="变量值" required>
-					<Input v-model="value" type="textarea" autosize/>
+					<base-editbox v-model="value"/>
 				</FormItem>
 				<FormItem label="备注">
 					<Input v-model="remark"/>
@@ -23,5 +23,4 @@
 	</Row>
 </template>
 <script src="./script.js">
-
 </script>

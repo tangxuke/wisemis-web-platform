@@ -1,5 +1,5 @@
 <template>
-    <div is="Input" type="text" v-model="value1" :placeholder="placeholder" :rows="rows" ref="control" @on-keydown="onKeyDown" @on-change="onChange"  style="width: auto">
+    <div is="Input" type="text" v-model="value1" :placeholder="placeholder" :rows="rows" ref="control" @on-keydown="onKeyDown" @on-change="onChange">
         <Icon type="ios-add-circle-outline" slot="suffix" @click="onZoom" />
     </div>
 </template>

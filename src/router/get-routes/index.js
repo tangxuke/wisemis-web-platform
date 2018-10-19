@@ -64,7 +64,7 @@ function GetRoutes() {
 function formatMenu(item) {
     var node = {
         name: item.name,
-        path: item.path,
+        path: item.path || '/404',
         filepath: item.path,
         render: item.render_code,
         component: null,
@@ -103,7 +103,6 @@ function formatMenu(item) {
 //meta:{...meta,title:'群消息'}
 var result = GetRoutes()
     .then(res => {
-        console.log(res);
         return Promise.resolve(res);
     });
 

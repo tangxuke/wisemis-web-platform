@@ -1,9 +1,20 @@
 <template>
-    <Checkbox v-model="oFieldObject.Value" ref="control"></Checkbox>
+    <Checkbox v-model="Value" ref="control"></Checkbox>
 </template>
 
 <script>
 export default {
-    props:['oFieldObject']
-}
+  props: ["oFieldObject"],
+  computed: {
+    Value: {
+      get() {
+        if (typeof this.oFieldObject.Value !== "boolean") return false;
+        else return this.oFieldObject.Value;
+      },
+      set(value) {
+        this.oFieldObject.Value = value;
+      }
+    }
+  }
+};
 </script>

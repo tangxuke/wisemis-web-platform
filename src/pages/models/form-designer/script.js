@@ -153,6 +153,7 @@ export default {
 		 * 预览效果
 		 */
 		Preview() {
+			this.Save();
 			var instance = new Vue(this.getVueOptions());
 			console.log(instance);
 			var component = instance.$mount();

@@ -64,10 +64,10 @@ import CustomMethods from './wisemis-components/common-functions';
 import CustomComponents from './wisemis-components/custom-components';
 import CustomRouter from './router';
 
-Promise.all([CustomMethods, CustomComponents,CustomRouter])
+Promise.all([CustomMethods, CustomComponents, CustomRouter])
   .then(values => {
-    var router=values[2].router;
-    var frameInRoutes=values[2].customRoutes;
+    var router = values[2].router;
+    var frameInRoutes = values[2].customRoutes;
     window.myVue = new Vue({
       router,
       store,
@@ -139,5 +139,5 @@ Promise.all([CustomMethods, CustomComponents,CustomRouter])
 
   })
   .catch(reason => {
-    console.log('NG');
+    console.error('NG', reason);
   })

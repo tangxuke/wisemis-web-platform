@@ -1,25 +1,32 @@
 <template>
     <d2-container>
-		<Row>
-			<Col :span="6" style="padding:10px;">
-				<Row>
-					<Form :label-width="80">
-						<FormItem label="组件名"><Input v-model="ComponentName"/></FormItem>
-						<FormItem label="标签名"><Input v-model="ComponentTag"/></FormItem>
-						<FormItem>
-							<Button @click="Save">保存</Button>
-							<Button @click="createNewObject">新建</Button>
-						</FormItem>
-
-					</Form>
-				</Row>
-				<my-table model="components" @ON-ROW-CLICK="onRowClick" ref="components"></my-table>
-			</Col>
-			<Col :span="18" style="padding:10px;">
 				<Tabs>
+					<TabPane label="组件列表">
+						<Row>
+							<Col :span="12">
+								<my-table model="components" @ON-ROW-CLICK="onRowClick" :hideButtons="true" ref="components"></my-table>
+							</Col>
+							<Col :span="12">
+								<Form :label-width="80">
+									<FormItem label="组件名"><Input v-model="ComponentName"/></FormItem>
+									<FormItem label="标签名"><Input v-model="ComponentTag"/></FormItem>
+									<FormItem>
+										<Button type="primary" @click="Save">保存</Button>
+										<Button @click="createNewObject" style="margin-left:10px;">新建</Button>
+									</FormItem>
+								</Form>
+							</Col>
+						</Row>
+					</TabPane>
 					<TabPane label="设计">
 						<div style="padding: 10px;background: #f8f8f9">
 							<Tabs>
+								<TabPane label="render">
+									<my-render 
+										:oVue="oVue"
+										ref="render"
+									/>
+								</TabPane>
 								<TabPane label="props">
 									<Form :label-width="100">
 										<FormItem label="属性列表">
@@ -45,12 +52,7 @@
 										ref="methods"
 									/>
 								</TabPane>
-								<TabPane label="render">
-									<my-render 
-										:oVue="oVue"
-										ref="render"
-									/>
-								</TabPane>
+								
 								<TabPane label="mounted">
 									<base-editbox v-model="oVue.mounted" :rows="15"></base-editbox>
 								</TabPane>
@@ -75,9 +77,6 @@
 						
 					</TabPane>
 				</Tabs>
-			</Col>
-		</Row>
-
     </d2-container>
 </template>
 
