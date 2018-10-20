@@ -58,6 +58,7 @@ export default {
             key: '',
             ref: '',
             selectedNode: null,
+            copyedNode:null,
             selectedTab: 'tag',
             prop_type: 'props',
             vif: false,
@@ -299,6 +300,44 @@ export default {
             };
             return node;
         },
+        /**拷贝对象 */
+        copyObject(obj){
+            var json=JSON.stringify(obj);
+            return JSON.parse(json);
+        },
+        /**复制节点 */
+        copyNode(){
+            if(!this.selectedNode)
+                return;
+            this.copyedNode=this.copyObject(this.selectedNode);
+        },
+        /**剪切节点 */
+        cutNode(){
+            console.log(this.selectedNode);
+            if(!this.selectedNode)
+                return;
+            this.copyedNode=this.copyObject(this.selectedNode);
+            this.RemoveNode();
+        },
+        /**粘贴节点 */
+        pasteNode(){
+            if(!this.copyedNode){
+                alert('没有待粘贴的节点！');
+                return;
+            }
+            var theNode=this.copyObject(this.copyedNode);
+
+            //没有选中节点，则直接粘贴为根节点
+            if(!this.selectedNode){
+                var render=this.oVue.render;
+                render.push(theNode);
+                this.$set(this.oVue,'render',render);
+            }else{
+                var children=this.selectedNode.children || [];
+                children.push(theNode);
+                this.$set(this.selectedNode,'children',children);
+            }
+        },
         getParentNode(node) {
             var parentNodeKey = node.parentNodeKey;
             if (parentNodeKey === null) {
@@ -353,6 +392,7 @@ export default {
             }
             return nodes;
         },
+        /**添加下级节点 */
         AppendChildLevelNode() {
             var newNode = this.newNode();
             var selectedNodes = this.$refs.tree.getSelectedNodes();
@@ -367,11 +407,12 @@ export default {
             }
             this.Clear();
         },
+        /**添加同级节点 */
         AppendSameLevelNode() {
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             var newNode = this.newNode();
             if (selectedNodes.length === 0) {
-                this.data1.push(this.newNode())
+                this.data1.push(newNode)
             } else {
                 var selectedNode = selectedNodes[0];
                 var parentNode = this.treeNodes.find(item => {
@@ -386,6 +427,47 @@ export default {
                 }
             }
             this.Clear();
+        },
+        /**添加上级节点 */
+        AppendParentLevelNode(){
+            var selectedNodes = this.$refs.tree.getSelectedNodes();
+            var newNode = this.newNode();
+            if(selectedNodes.length===0){
+                //无选择节点，则添加一级节点
+                this.data1.push(newNode);
+            }else{
+                //有选择的节点，把选择节点加入新节点当中，并把新节点加入选择节点的父节点当中，并从选择节点的父节点当中移除选择节点
+                var selectedNode=selectedNodes[0];
+                var parentNode=this.getParentNode(selectedNode);
+                //将选择节点加入新节点当中
+                var children1=newNode.children || [];
+                children1.push(selectedNode);
+                this.$set(newNode,'children',children1);
+                //将新节点加入到选择节点的父节点当中
+                if(parentNode){
+                    //有父节点，新节点加入父节点当中
+                    var children2=parentNode.children || [];
+                    children2.push(newNode);
+                    //移除原选择节点
+                    var index=children2.findIndex(item=>{
+                        return item.nodeKey===selectedNode.nodeKey;
+                    });
+                    if(index>-1){
+                        children2.splice(index,1);
+                    }
+                    //设置
+                    this.$set(parentNode,'children',children2);
+                }else{
+                    //无父节点，新节点作为一级节点,一级节点中移除选择节点
+                    this.data1.push(newNode);
+                    var index=this.data1.findIndex(item=>{
+                        return item.nodeKey===selectedNode.nodeKey;
+                    });
+                    if(index>-1){
+                        this.data1.splice(index,1);
+                    }
+                }
+            }
         },
         onSelectChange(nodes) {
             this.selectedTab = "tag";

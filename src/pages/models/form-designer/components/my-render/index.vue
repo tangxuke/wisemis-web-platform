@@ -14,7 +14,16 @@
                         <ButtonGroup>
                             <Button @click="AppendSameLevelNode">添加同级</Button>
                             <Button @click="AppendChildLevelNode" :disabled="isTextNode || selectedNode===null">添加下级</Button>
-                            <Button @click="RemoveNode"  :disabled="selectedNode===null">删除</Button>
+                            <Button @click="AppendParentLevelNode" :disabled="selectedNode===null">添加上级</Button>
+                            
+                        </ButtonGroup>
+                    </Row>
+                    <Row>
+                        <ButtonGroup>
+                            <Button :disabled="selectedNode===null" @click="copyNode">复制</Button>
+                            <Button :disabled="selectedNode===null" @click="cutNode">剪切</Button>
+                            <Button :disabled="copyedNode===null" @click="pasteNode">粘贴</Button>
+                            <Button  :disabled="selectedNode===null" @click="RemoveNode">删除</Button>
                         </ButtonGroup>
                     </Row>
                     <Row>
