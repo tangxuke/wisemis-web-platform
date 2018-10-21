@@ -1,4 +1,4 @@
-import XmlReader  from 'xml-reader';
+import XmlReader from 'xml-reader';
 
 export default {
     props: ['oVue'],
@@ -58,15 +58,17 @@ export default {
             key: '',
             ref: '',
             selectedNode: null,
-            copyedNode:null,
+            copyedNode: null,
             selectedTab: 'tag',
             prop_type: 'props',
             vif: false,
             vshow: false,
             vfor: false,
+            vmodel: false,
             vif_expr: '',
             vshow_expr: '',
             vfor_expr: '',
+            vmodel_expr: '',
             renderType: 'tree',
             renderCode: ''
         }
@@ -98,17 +100,17 @@ export default {
         createRenderCode() {
             var code = '';
             if (this.renderType === 'tree') {
-                if (this.data1.length == 0){
-                    this.renderCode='';
+                if (this.data1.length == 0) {
+                    this.renderCode = '';
                     return;
                 }
 
                 var root = this.data1[0];
                 this.renderCode = `return ${this.nodeToRender(root)};`;
             } else {
-                var reader=XmlReader.create();
-                reader.on('done',data=>{
-                    this.renderCode=data.name;
+                var reader = XmlReader.create();
+                reader.on('done', data => {
+                    this.renderCode = data.name;
                 });
                 reader.parse(this.oVue.htmlCode)
             }
@@ -136,7 +138,7 @@ export default {
             var _props = props_data.filter(item => {
                 return item.type === type;
             }).map(item => {
-                return `'`+item.name + `':` + item.value;
+                return `'` + item.name + `':` + item.value;
             }).join(',');
             if (_props.length > 0) {
                 _props = type + ':{' + _props + '}';
@@ -147,44 +149,44 @@ export default {
          * 生成HTML节点的Render函数
          * @param {{name:string,type:string,value:string,parent:Object,attributes:Object,children:[{name,type,value,parent,attributes,children}]} node html节点
          */
-        htmlNodeToRender(node){
+        htmlNodeToRender(node) {
             //文本节点
-            if(node.type==='text'){
+            if (node.type === 'text') {
                 return node.value;
             }
             //non-text node
-            var nodeRender='';
+            var nodeRender = '';
             //data
-            var data=[];
-            Object.keys(node.attributes).forEach(key=>{
+            var data = [];
+            Object.keys(node.attributes).forEach(key => {
                 data.push({
-                    type:'props',
-                    name:key,
-                    value:node.attributes[key]
+                    type: 'props',
+                    name: key,
+                    value: node.attributes[key]
                 });
                 data.push({
-                    type:'domProps',
-                    name:key,
-                    value:node.attributes[key]
+                    type: 'domProps',
+                    name: key,
+                    value: node.attributes[key]
                 });
             });
             //TODO...
         },
         /**
          * 生成节点的Render函数
-         * @param {{tag:string,isTextNode:boolean,text:string,props_data:[{type:string,name:string,value:string}],children:[{tag,isTextNode,text,props_data}]} node 节点
+         * @param {{tag:string,isTextNode:boolean,vif:boolean,vif_expr:string,vshow:boolean,vshow_expr:string,vfor:boolean,vfor_expr:string,vmodel:boolean,vmodel_expr:string,text:string,props_data:[{type:string,name:string,value:string}],children:[{tag,isTextNode,text,props_data}]} node 节点
          */
         nodeToRender(node) {
             //文本节点      
             if (node.isTextNode) {
-                var s='`'+node.text+'`';
-                while (s.indexOf('{{')>-1) {
-                    var a=s.indexOf('{{');
-                    var b=s.indexOf('}}',a);
-                    var e=s.substr(a+2,b-a-2);
-                    var s1=s.substr(0,a);
-                    var s2=s.substr(b+2);
-                    s=s1+"`+eval(`"+e+"`)+`"+s2;
+                var s = '`' + node.text + '`';
+                while (s.indexOf('{{') > -1) {
+                    var a = s.indexOf('{{');
+                    var b = s.indexOf('}}', a);
+                    var e = s.substr(a + 2, b - a - 2);
+                    var s1 = s.substr(0, a);
+                    var s2 = s.substr(b + 2);
+                    s = s1 + "`+eval(`" + e + "`)+`" + s2;
                 }
                 return s;
             }
@@ -202,6 +204,19 @@ export default {
             }
             if (node.ref) {
                 data.push('ref:' + `'` + node.ref + `'`);
+            }
+            //v-model
+            if (node.vmodel) {
+                props_data.push({
+                    type: 'props',
+                    name: 'value',
+                    value: node.vmodel_expr
+                });
+                props_data.push({
+                    type: 'on',
+                    name: 'input',
+                    value: `(value)=>{${node.vmodel_expr}=value;}`
+                });
             }
             //v-show
             if (node.vshow) {
@@ -296,76 +311,85 @@ export default {
                 vshow: false,
                 vshow_expr: '',
                 vfor: false,
-                vfor_expr: ''
+                vfor_expr: '',
+                vmodel: false,
+                vmodel_expr: ''
             };
             return node;
         },
         /**拷贝对象 */
-        copyObject(obj){
-            var json=JSON.stringify(obj);
+        copyObject(obj) {
+            var json = JSON.stringify(obj);
             return JSON.parse(json);
         },
         /**复制节点 */
-        copyNode(){
-            if(!this.selectedNode)
+        copyNode() {
+            if (!this.selectedNode)
                 return;
-            this.copyedNode=this.copyObject(this.selectedNode);
+            this.copyedNode = this.copyObject(this.selectedNode);
         },
         /**剪切节点 */
-        cutNode(){
+        cutNode() {
             console.log(this.selectedNode);
-            if(!this.selectedNode)
+            if (!this.selectedNode)
                 return;
-            this.copyedNode=this.copyObject(this.selectedNode);
+            this.copyedNode = this.copyObject(this.selectedNode);
             this.RemoveNode();
         },
         /**粘贴节点 */
-        pasteNode(){
-            if(!this.copyedNode){
+        pasteNode() {
+            if (!this.copyedNode) {
                 alert('没有待粘贴的节点！');
                 return;
             }
-            var theNode=this.copyObject(this.copyedNode);
+            var theNode = this.copyObject(this.copyedNode);
 
             //没有选中节点，则直接粘贴为根节点
-            if(!this.selectedNode){
-                var render=this.oVue.render;
+            if (!this.selectedNode) {
+                var render = this.oVue.render;
                 render.push(theNode);
-                this.$set(this.oVue,'render',render);
-            }else{
-                var children=this.selectedNode.children || [];
+                this.$set(this.oVue, 'render', render);
+            } else {
+                var children = this.selectedNode.children || [];
                 children.push(theNode);
-                this.$set(this.selectedNode,'children',children);
+                this.$set(this.selectedNode, 'children', children);
             }
         },
+        /**
+         * 获取父节点
+         * @param {{nodeKey:string,children:[nodeKey]}} node 
+         */
         getParentNode(node) {
-            var parentNodeKey = node.parentNodeKey;
-            if (parentNodeKey === null) {
-                //没有父节点，说明是顶层节点
+            if (!node)
                 return null;
-            }
-            var parent = this.treeNodes.find(item => {
-                return item.nodeKey === parentNodeKey;
+
+            var parent=this.treeNodes.find(item=>{
+                if(!Array.isArray(item.children))
+                    return false;
+                return item.children.findIndex(e=>{
+                    return e.nodeKey===node.nodeKey;
+                })>-1;
             });
+
             return parent;
         },
         RemoveNode() {
-            var nodes = this.$refs.tree.getSelectedNodes();
-            if (nodes.length === 0)
+            var node = this.selectedNode;
+            if (!node)
                 return;
-
-            var node = nodes[0];
 
             var nodeKey = node.nodeKey;
             var parent = this.getParentNode(node);
             if (!parent) {
                 //顶层节点，从data1数组移除
-                var index = this.data1.findIndex(item => {
+                var data = this.data1;
+                var index = data.findIndex(item => {
                     return item.nodeKey === nodeKey;
                 });
                 if (index > -1) {
-                    this.data1.splice(index, 1);
+                    data.splice(index, 1);
                 }
+                this.$set(this.oVue, 'render', data);
             } else {
                 var children = parent.children;
                 if (!Array.isArray(children))
@@ -394,10 +418,13 @@ export default {
         },
         /**添加下级节点 */
         AppendChildLevelNode() {
+            
             var newNode = this.newNode();
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             if (selectedNodes.length === 0) {
-                this.data1.push(newNode)
+                var data = this.data1;
+                data.push(newNode);
+                this.$set(this.oVue, 'render', data);
             } else {
                 var selectedNode = selectedNodes[0];
                 var children = selectedNode.children || [];
@@ -412,7 +439,7 @@ export default {
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             var newNode = this.newNode();
             if (selectedNodes.length === 0) {
-                this.data1.push(newNode)
+                this.oVue.render.push(newNode)
             } else {
                 var selectedNode = selectedNodes[0];
                 var parentNode = this.treeNodes.find(item => {
@@ -423,48 +450,49 @@ export default {
                     children.push(newNode);
                     this.$set(parentNode, 'children', children);
                 } else {
-                    this.data1.push(newNode);
+                    this.oVue.render.push(newNode);
                 }
             }
             this.Clear();
         },
         /**添加上级节点 */
-        AppendParentLevelNode(){
+        AppendParentLevelNode() {
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             var newNode = this.newNode();
-            if(selectedNodes.length===0){
+            newNode.expand=true;
+            if (selectedNodes.length === 0) {
                 //无选择节点，则添加一级节点
-                this.data1.push(newNode);
-            }else{
+                this.oVue.render.push(newNode);
+            } else {
                 //有选择的节点，把选择节点加入新节点当中，并把新节点加入选择节点的父节点当中，并从选择节点的父节点当中移除选择节点
-                var selectedNode=selectedNodes[0];
-                var parentNode=this.getParentNode(selectedNode);
+                var selectedNode = selectedNodes[0];
+                var parentNode = this.getParentNode(selectedNode);
                 //将选择节点加入新节点当中
-                var children1=newNode.children || [];
+                var children1 = newNode.children || [];
                 children1.push(selectedNode);
-                this.$set(newNode,'children',children1);
+                this.$set(newNode, 'children', children1);
                 //将新节点加入到选择节点的父节点当中
-                if(parentNode){
+                if (parentNode) {
                     //有父节点，新节点加入父节点当中
-                    var children2=parentNode.children || [];
+                    var children2 = parentNode.children || [];
                     children2.push(newNode);
                     //移除原选择节点
-                    var index=children2.findIndex(item=>{
-                        return item.nodeKey===selectedNode.nodeKey;
+                    var index = children2.findIndex(item => {
+                        return item.nodeKey === selectedNode.nodeKey;
                     });
-                    if(index>-1){
-                        children2.splice(index,1);
+                    if (index > -1) {
+                        children2.splice(index, 1);
                     }
                     //设置
-                    this.$set(parentNode,'children',children2);
-                }else{
+                    this.$set(parentNode, 'children', children2);
+                } else {
                     //无父节点，新节点作为一级节点,一级节点中移除选择节点
-                    this.data1.push(newNode);
-                    var index=this.data1.findIndex(item=>{
-                        return item.nodeKey===selectedNode.nodeKey;
+                    this.oVue.render.push(newNode);
+                    var index = this.oVue.render.findIndex(item => {
+                        return item.nodeKey === selectedNode.nodeKey;
                     });
-                    if(index>-1){
-                        this.data1.splice(index,1);
+                    if (index > -1) {
+                        this.oVue.render.splice(index, 1);
                     }
                 }
             }
@@ -490,6 +518,8 @@ export default {
             this.vshow_expr = this.selectedNode.vshow_expr;
             this.vfor = this.selectedNode.vfor;
             this.vfor_expr = this.selectedNode.vfor_expr;
+            this.vmodel = this.selectedNode.vmodel;
+            this.vmodel_expr = this.selectedNode.vmodel_expr;
         },
         Apply() {
             if (this.isTextNode) {
@@ -510,6 +540,8 @@ export default {
             this.selectedNode.vshow_expr = this.vshow_expr;
             this.selectedNode.vfor = this.vfor;
             this.selectedNode.vfor_expr = this.vfor_expr;
+            this.selectedNode.vmodel = this.vmodel;
+            this.selectedNode.vmodel_expr = this.vmodel_expr;
 
             this.selectedNode.key = this.key;
             this.selectedNode.ref = this.ref;
@@ -528,6 +560,8 @@ export default {
                 this.vshow_expr = '',
                 this.vfor = false,
                 this.vfor_expr = '',
+                this.vmodel = false,
+                this.vmodel_expr = '',
                 this.tagType = 'component',
                 this.selectedNode = null;
         }

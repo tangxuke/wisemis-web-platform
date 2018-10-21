@@ -50,7 +50,7 @@ export default {
      */
     checkValid(){
       var oField=this.fields.filter(item=>{
-        return (item.IsInsert || item.IsUpdate || item.IsKey) && item.ShowInForm;
+        return (item.IsInsert || item.IsUpdate) && item.ShowInForm;
       }).find(item=>{
         return !item.control.checkValid();
       });
@@ -125,7 +125,9 @@ export default {
       }
       this.$emit('ON-SAVE-BEFORE')
       var data = {};
-      this.fields.forEach(item => {
+      this.fields.filter(item=>{
+        return item.IsInsert || item.IsUpdate || item.IsKey;
+      }).forEach(item => {
         data[item.Name] = item.Value;
         data[item.Name + "_OldValue"] = item.OldValue;
       });

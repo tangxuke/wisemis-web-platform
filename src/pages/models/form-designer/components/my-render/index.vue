@@ -56,6 +56,7 @@
                                 <Row><Checkbox v-model="vif">v-if</Checkbox><Input v-if="vif" v-model="vif_expr" placeholder="请输入v-if表达式"/></Row>
                                 <Row><Checkbox v-model="vshow">v-show</Checkbox><Input v-if="vshow" v-model="vshow_expr" placeholder="请输入v-show表达式"/></Row>
                                 <Row><Checkbox v-model="vfor">v-for</Checkbox><Input v-if="vfor" v-model="vfor_expr" placeholder="请输入v-for表达式"/></Row>
+                                <Row><Checkbox v-model="vmodel">v-model</Checkbox><Input v-if="vmodel" v-model="vmodel_expr" placeholder="请输入v-model绑定的变量"/></Row>
                                 
                             </TabPane>
                             <TabPane name="props" label="props" v-show="!isTextNode && tag">
