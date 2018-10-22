@@ -80,6 +80,7 @@
 
 <script>
 export default {
+    name:'model-list',
     data(){
         return {
             modelName:'',

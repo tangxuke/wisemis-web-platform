@@ -5,7 +5,7 @@ import Vue from 'vue';
 // layout
 import layoutHeaderAside from '@/layout/header-aside'
 
-const meta = { requiresAuth: true }
+const meta = { requiresAuth: true,keepAlive: true }
 
 /**
  * 返回菜单列表（同时构造路由）
