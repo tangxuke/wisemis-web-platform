@@ -8,11 +8,18 @@ export default {
             props_value: '',
             props_rowindex: -1,
             show_all_props: true,
-            props_columns: [
-                { key: 'type', title: '类型' },
+            props_columns: [{
+                    key: 'type',
+                    title: '类型'
+                },
                 {
-                    key: 'name', title: '属性名',
-                    render: (h, { row, column, index }) => {
+                    key: 'name',
+                    title: '属性名',
+                    render: (h, {
+                        row,
+                        column,
+                        index
+                    }) => {
                         if (row.remark) {
                             return h('Tooltip', {
                                 props: {
@@ -25,10 +32,21 @@ export default {
 
                     }
                 },
-                { key: 'value', title: '属性值', ellipsis: true, tooltip: true },
                 {
-                    title: '操作', fixed: 'right', width: 80,
-                    render: (h, { row, column, index }) => {
+                    key: 'value',
+                    title: '属性值',
+                    ellipsis: true,
+                    tooltip: true
+                },
+                {
+                    title: '操作',
+                    fixed: 'right',
+                    width: 80,
+                    render: (h, {
+                        row,
+                        column,
+                        index
+                    }) => {
                         var _this = this;
                         return h('Button', {
                             props: {
@@ -179,16 +197,17 @@ export default {
         nodeToRender(node) {
             //文本节点      
             if (node.isTextNode) {
-                var s = '`' + node.text + '`';
+                var s = "`" + node.text + "`";
                 while (s.indexOf('{{') > -1) {
                     var a = s.indexOf('{{');
                     var b = s.indexOf('}}', a);
                     var e = s.substr(a + 2, b - a - 2);
                     var s1 = s.substr(0, a);
                     var s2 = s.substr(b + 2);
-                    s = s1 + "`+eval(`" + e + "`)+`" + s2;
+                    s = s1 + "`+String(" + e + ")+`" + s2;
+                    //s = s1 + "`+eval(`" + e + "`)+`" + s2;
                 }
-                return s;
+                return "h('span',[" + s + "])";
             }
 
             //non-text node
@@ -291,7 +310,11 @@ export default {
                 this.selectedNode.props_data[this.props_rowindex].name = this.props_name;
                 this.selectedNode.props_data[this.props_rowindex].value = this.props_value;
             } else {
-                this.selectedNode.props_data.push({ name: this.props_name, value: this.props_value, type: this.prop_type });
+                this.selectedNode.props_data.push({
+                    name: this.props_name,
+                    value: this.props_value,
+                    type: this.prop_type
+                });
             }
             this.ClearProp();
         },
@@ -363,12 +386,12 @@ export default {
             if (!node)
                 return null;
 
-            var parent=this.treeNodes.find(item=>{
-                if(!Array.isArray(item.children))
+            var parent = this.treeNodes.find(item => {
+                if (!Array.isArray(item.children))
                     return false;
-                return item.children.findIndex(e=>{
-                    return e.nodeKey===node.nodeKey;
-                })>-1;
+                return item.children.findIndex(e => {
+                    return e.nodeKey === node.nodeKey;
+                }) > -1;
             });
 
             return parent;
@@ -418,7 +441,7 @@ export default {
         },
         /**添加下级节点 */
         AppendChildLevelNode() {
-            
+
             var newNode = this.newNode();
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             if (selectedNodes.length === 0) {
@@ -459,7 +482,7 @@ export default {
         AppendParentLevelNode() {
             var selectedNodes = this.$refs.tree.getSelectedNodes();
             var newNode = this.newNode();
-            newNode.expand=true;
+            newNode.expand = true;
             if (selectedNodes.length === 0) {
                 //无选择节点，则添加一级节点
                 this.oVue.render.push(newNode);

@@ -10,6 +10,7 @@
 								<Form :label-width="80">
 									<FormItem label="组件名"><Input v-model="ComponentName"/></FormItem>
 									<FormItem label="标签名"><Input v-model="ComponentTag"/></FormItem>
+									<FormItem label="备注"><Input v-model="ComponentRemark"/></FormItem>
 									<FormItem>
 										<Button type="primary" @click="Save">保存</Button>
 										<Button @click="createNewObject" style="margin-left:10px;">新建</Button>

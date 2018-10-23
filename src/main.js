@@ -58,6 +58,7 @@ Vue.config.productionTip = false
 Vue.prototype.$env = process.env.NODE_ENV
 Vue.prototype.$baseUrl = process.env.BASE_URL
 
+window.myVue = new Vue({});
 
 //等待异步任务完成
 import CustomMethods from './wisemis-components/common-functions';
@@ -126,8 +127,16 @@ Promise.all([CustomMethods, CustomComponents, CustomRouter])
               if (route.children) {
                 push(route.children)
               } else {
-                const { meta, name, path } = route
-                pool.push({ meta, name, path })
+                const {
+                  meta,
+                  name,
+                  path
+                } = route
+                pool.push({
+                  meta,
+                  name,
+                  path
+                })
               }
             })
           }

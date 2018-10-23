@@ -27,152 +27,157 @@
     </div>
 </template>
 
-<script>  
-import VueComponent from 'vue';
-import SelectDepartmentControl from './form-controls/select-department-control';
-import MyEditbox from './form-controls/my-editbox';
-import MyTextbox from './form-controls/my-textbox';
-import MyCheckbox from './form-controls/my-checkbox';
-import MyDatePicker from './form-controls/my-date-picker';
-import MySelect from './form-controls/my-select';
-import MyList from './form-controls/my-list';
-   
+<script>
+import VueComponent from "vue";
+import SelectDepartmentControl from "./form-controls/select-department-control";
+import MyEditbox from "./form-controls/my-editbox";
+import MyTextbox from "./form-controls/my-textbox";
+import MyCheckbox from "./form-controls/my-checkbox";
+import MyDatePicker from "./form-controls/my-date-picker";
+import MySelect from "./form-controls/my-select";
+import MyList from "./form-controls/my-list";
+
 export default {
-    props:{
-        oFieldObject:
-        {
-            type:Object
-        }
-    },
-    computed:{
-        style(){
-            if(Number.isInteger(this.oFieldObject.ControlHeight) && this.oFieldObject.ControlHeight>0){
-                return {height:this.oFieldObject.ControlHeight*32+'px'};
-            }else{
-                return {height:'unset'};
-            }
-        },
-        Value:{
-            get(){
-                return this.oFieldObject.Value;
-            },
-            set(newVal){
-                this.oFieldObject.Value=newVal;
-            }
-        },
-        Visible:{
-            get(){
-                return this.oFieldObject.ShowInForm;
-            },
-            set(newVal){
-                this.oFieldObject.ShowInForm=newVal;
-            }
-        }
-    },
-    components:{
-        'select-department-control':SelectDepartmentControl,
-        'my-editbox':MyEditbox,
-        'my-textbox':MyTextbox,
-        'my-checkbox':MyCheckbox,
-        'my-date-picker':MyDatePicker,
-        'my-select':MySelect,
-        'my-list':MyList
-    },
-    methods:{
-        /**
-         * 检查输入有效性
-         * @returns {boolean}
-         */
-        checkValid(){
-            //检查输入完整性
-            if(this.oFieldObject.IsKey || this.oFieldObject.IsNotNull){
-                if(!this.oFieldObject.Value){
-                    this.$Modal.info({
-                        title:'数据输入不完整',
-                        content:`[${this.oFieldObject.Title}]不能为空！`,
-                        onOk:()=>{
-                            this.setFocus();
-                        }
-                    });
-                    return false;
-                }
-            }
-            //检查正则表达式
-            if(this.oFieldObject.RegExpression && this.oFieldObject.Value){
-                var regExpr=new RegExp(this.oFieldObject.RegExpression);
-                if(!regExpr.test(''+this.oFieldObject.Value)){
-                    this.$Modal.info({
-                        title:'数据输入不合法',
-                        content:`[${this.oFieldObject.Title}]正则表达式验证失败！`,
-                        onOk:()=>{
-                            this.setFocus();
-                        }
-                    });
-                    return false;
-                }
-            }
-            return true;
-        },
-        /**打开文本对话框 */
-        openTextDialog(){
-            if(typeof this.oFieldObject.Type !=='string')
-                return;
-            this.$dialogs.OpenTextDialog('编辑 - '+this.oFieldObject.Title,this.oFieldObject.Value)
-            .then(value=>{
-                this.oFieldObject.Value=value;
-                this.setFocus();
-            })
-            .catch(()=>{});
-        },
-        /**
-         * 设置字段值
-         * @param {any} value 字段值
-         */
-        setValue(value){
-            this.oFieldObject.Value=value;
-        },
-        /**
-         * 获取字段值
-         * @returns {any}
-         */
-        getValue(){
-            return this.oFieldObject.Value;
-        },
-        /**设置焦点 */
-        setFocus(){
-            var oCoreFieldControl=this.getCoreFieldControl();
-            if(oCoreFieldControl.focus){
-                oCoreFieldControl.focus();
-            }
-        },
-        /**
-         * 获取核心字段控件
-         * @returns {VueComponent}
-         */
-        getCoreFieldControl(){
-            return this.$refs.field.$refs.control;
-        }
-    },
-    mounted(){
-        //把控件注册到表单，以便支持this.xxfield.setFocus()等功能
-        this.oFieldObject.thisform[this.oFieldObject.Name]=this;
-        this.oFieldObject.control=this;
-
-        if(this.oFieldObject.AutoFocus)
-            this.setFocus();
-
-        //注册事件处理程序
-        this.oFieldObject.Scripts.forEach(ev => {
-            var params=ev.params || '';
-            var aParams=params.split(',');
-            var fn=new Function(...aParams,ev.code); 
-            //注册字段内核控件的事件处理程序
-            var control=this.getCoreFieldControl();
-            control.$on(ev.type,(...aParams)=>{
-                fn.call(this.oFieldObject.thisform,...aParams);
-            });
-        });
-
+  props: {
+    oFieldObject: {
+      type: Object
     }
-}
+  },
+  computed: {
+    style() {
+      if (
+        Number.isInteger(this.oFieldObject.ControlHeight) &&
+        this.oFieldObject.ControlHeight > 0
+      ) {
+        return { height: this.oFieldObject.ControlHeight * 32 + "px" };
+      } else {
+        return { height: "unset" };
+      }
+    },
+    Value: {
+      get() {
+        return this.oFieldObject.Value;
+      },
+      set(newVal) {
+        this.oFieldObject.Value = newVal;
+      }
+    },
+    Visible: {
+      get() {
+        return this.oFieldObject.ShowInForm;
+      },
+      set(newVal) {
+        this.oFieldObject.ShowInForm = newVal;
+      }
+    }
+  },
+  components: {
+    "select-department-control": SelectDepartmentControl,
+    "my-editbox": MyEditbox,
+    "my-textbox": MyTextbox,
+    "my-checkbox": MyCheckbox,
+    "my-date-picker": MyDatePicker,
+    "my-select": MySelect,
+    "my-list": MyList
+  },
+  methods: {
+    /**
+     * 检查输入有效性
+     * @returns {boolean}
+     */
+    checkValid() {
+      //检查输入完整性
+      if (this.oFieldObject.IsKey || this.oFieldObject.IsNotNull) {
+        if (!this.oFieldObject.Value) {
+          this.$Modal.info({
+            title: "数据输入不完整",
+            content: `[${this.oFieldObject.Title}]不能为空！`,
+            onOk: () => {
+              this.setFocus();
+            }
+          });
+          return false;
+        }
+      }
+      //检查正则表达式
+      if (this.oFieldObject.RegExpression && this.oFieldObject.Value) {
+        var regExpr = new RegExp(this.oFieldObject.RegExpression);
+        if (!regExpr.test("" + this.oFieldObject.Value)) {
+          this.$Modal.info({
+            title: "数据输入不合法",
+            content: `[${this.oFieldObject.Title}]正则表达式验证失败！`,
+            onOk: () => {
+              this.setFocus();
+            }
+          });
+          return false;
+        }
+      }
+      return true;
+    },
+    /**打开文本对话框 */
+    openTextDialog() {
+      if (typeof this.oFieldObject.Type !== "string") return;
+      this.$dialogs
+        .OpenTextDialog(
+          "编辑 - " + this.oFieldObject.Title,
+          this.oFieldObject.Value
+        )
+        .then(value => {
+          if (typeof this.oFieldObject.Value === "string")
+            this.oFieldObject.Value = value;
+          else this.oFieldObject.Value = eval(value);
+          this.setFocus();
+        })
+        .catch(() => {});
+    },
+    /**
+     * 设置字段值
+     * @param {any} value 字段值
+     */
+    setValue(value) {
+      this.oFieldObject.Value = value;
+    },
+    /**
+     * 获取字段值
+     * @returns {any}
+     */
+    getValue() {
+      return this.oFieldObject.Value;
+    },
+    /**设置焦点 */
+    setFocus() {
+      var oCoreFieldControl = this.getCoreFieldControl();
+      if (oCoreFieldControl.focus) {
+        oCoreFieldControl.focus();
+      }
+    },
+    /**
+     * 获取核心字段控件
+     * @returns {VueComponent}
+     */
+    getCoreFieldControl() {
+      return this.$refs.field.$refs.control;
+    }
+  },
+  mounted() {
+    //把控件注册到表单，以便支持this.xxfield.setFocus()等功能
+    this.oFieldObject.thisform[this.oFieldObject.Name] = this;
+    this.oFieldObject.control = this;
+
+    if (this.oFieldObject.AutoFocus) this.setFocus();
+
+    //注册事件处理程序
+    this.oFieldObject.Scripts.forEach(ev => {
+      var params = ev.params || "";
+      var aParams = params.split(",");
+      var fn = new Function(...aParams, ev.code);
+      //注册字段内核控件的事件处理程序
+      var control = this.getCoreFieldControl();
+      control.$on(ev.type, (...aParams) => {
+        fn.call(this.oFieldObject.thisform, ...aParams);
+      });
+    });
+  }
+};
 </script>

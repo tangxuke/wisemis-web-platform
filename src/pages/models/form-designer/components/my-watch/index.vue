@@ -21,10 +21,9 @@
 			</Form>
 		</Col>
 		<Col :span="14" style="padding:10px;">
-			<Table :columns="columns" :data="oVue.methods" @on-row-click="onRowClick" />
+			<Table :columns="columns" :data="oVue.watch" @on-row-click="onRowClick" />
 		</Col>
 	</Row>
 </template>
 <script src="./script.js">
-
 </script>
