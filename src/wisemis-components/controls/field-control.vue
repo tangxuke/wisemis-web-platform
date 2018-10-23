@@ -29,7 +29,6 @@
 
 <script>
 import VueComponent from "vue";
-import SelectDepartmentControl from "./form-controls/select-department-control";
 import MyEditbox from "./form-controls/my-editbox";
 import MyTextbox from "./form-controls/my-textbox";
 import MyCheckbox from "./form-controls/my-checkbox";
@@ -72,7 +71,6 @@ export default {
     }
   },
   components: {
-    "select-department-control": SelectDepartmentControl,
     "my-editbox": MyEditbox,
     "my-textbox": MyTextbox,
     "my-checkbox": MyCheckbox,

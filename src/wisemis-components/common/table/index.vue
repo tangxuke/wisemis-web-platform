@@ -77,8 +77,8 @@
 				>
 			</Table>
 		</Row>
-		<Row v-if="!hideButtons">
-			<Button type="default" style="margin:5px 0;">导出</Button>
+		<Row>
+			<Button type="default" style="margin:5px 0;" v-if="!hideButtons">导出</Button>
 			<Page 
 				:total="Count" 
 				:page-size="pagesize" 
