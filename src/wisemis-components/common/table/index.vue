@@ -82,9 +82,7 @@
 
 			<Checkbox v-model="multiSelect">多选</Checkbox>
 			<ButtonGroup v-if="multiSelect">
-				<Button @click="selectAll(true)">全部选择</Button>
-				<Button @click="selectAll(false)">取消全选</Button>
-				<Button>多选操作...</Button>
+				<Button type="error" ghost @click="confirmDeleteSelected">删除所选</Button>
 			</ButtonGroup>
 			<Button type="default" style="margin:5px;" v-if="!hideButtons">导出</Button>
 			<Page 

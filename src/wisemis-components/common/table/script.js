@@ -11,6 +11,19 @@ export default {
                 width: 60,
                 align: 'center',
                 key: '__checked__',
+                renderHeader:(h,{column,index})=>{
+                    return h('Checkbox',{
+                        props:{
+                            indeterminate:this.SelectState === -1,
+                            value:this.SelectState===1?true:false
+                        },
+                        on:{
+                            'on-change':value=>{
+                                this.selectAll(value);
+                            }
+                        }
+                    });
+                },
                 render: (h, params) => {
                     return h('Checkbox', {
                         ref: 'check',
@@ -82,6 +95,22 @@ export default {
         };
     },
     computed: {
+        SelectState(){
+            if(Array.from(this.data1).length===0)
+                return 0;
+            //全选
+            if(Array.from(this.data1).every(item=>{
+                return item.__checked__;
+            }))
+                return 1;
+            //全不选
+            if(Array.from(this.data1).every(item=>{
+                return !item.__checked__;
+            }))
+                return 0;
+            //不确定状态
+            return -1;
+        },
         pagesize: function() {
             return this.pageSize || 8;
         },
@@ -111,6 +140,54 @@ export default {
         }
     },
     methods: {
+        /**
+         * 确认删除选定记录的操作
+         */
+        confirmDeleteSelected(){
+            this.$Modal.confirm({
+                title:'系统提示',
+                content:'你真的要删除选定记录吗？',
+                onOk:()=>{
+                    setTimeout(() => {
+                        this.deleteSelected();
+                    }, 300);
+                }
+            })
+        },
+        /**
+         * 多选操作
+         */
+        deleteSelected(){
+            
+            var keys=this.fields.filter(item=>{
+                return item.IsKey;
+            }).map(item=>{
+                return item.Name;
+            });
+            var data=[];
+            this.data1.filter(item=>{
+                return item.__checked__;
+            }).forEach(item=>{
+                var keyData={};
+                keys.forEach(key=>{
+                    keyData[key]=item[key];
+                });
+                data.push(keyData);
+            });
+            
+            this.$axios.post(`/models/${this.model}/deleteMany`,{data})
+            .then(value=>{
+                if(value.success){
+                    this.$Message.success('删除成功！');
+                    this.refresh();
+                }else{
+                    this.$Modal.error({title:'删除失败',content:value.message});
+                }
+            })
+            .catch(reason=>{
+                this.$Modal.error({title:'删除失败',content:reason.message});
+            });
+        },
         /**
          * 设置全选
          * @param {boolean} value 是否选中
@@ -436,6 +513,9 @@ export default {
             if (newVal === oldVal)
                 return;
             this.refreshActionState(newVal);
+        },
+        multiSelect(){
+            this.selectAll(false);
         }
     }
 };
