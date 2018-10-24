@@ -46,12 +46,12 @@ Vue.config.debug = true;
 Vue.use(ElementUI)
 Vue.use(VCharts)
 Vue.use(contentmenu)
-//Vue.use(pluginLog)
-//Vue.use(pluginError)
-//Vue.use(pluginImport)
-//Vue.use(pluginExport)
-//Vue.use(pluginOpen)
-//Vue.use(vueJsonTreeView)
+    //Vue.use(pluginLog)
+    //Vue.use(pluginError)
+    //Vue.use(pluginImport)
+    //Vue.use(pluginExport)
+    //Vue.use(pluginOpen)
+    //Vue.use(vueJsonTreeView)
 
 Vue.config.productionTip = false
 
@@ -66,87 +66,87 @@ import CustomComponents from './wisemis-components/custom-components';
 import CustomRouter from './router';
 
 Promise.all([CustomMethods, CustomComponents, CustomRouter])
-  .then(values => {
-    var router = values[2].router;
-    var frameInRoutes = values[2].customRoutes;
-    window.myVue = new Vue({
-      router,
-      store,
-      //i18n,
-      render: h => h(App),
-      created() {
-        //获取用户菜单
-        this.$store.commit('get-menu', this)
-        // 处理路由 得到每一级的路由设置
-        this.getAllPageFromRoutes()
-        // 设置顶栏菜单
-        //this.$store.commit('d2adminMenuHeaderSet', menuHeader)
-      },
-      mounted() {
-        // D2Admin 开发环境检查更新
-        //util.checkUpdate(this)
-        // 获取并记录用户 UA
-        this.$store.commit('d2adminUaGet')
-        // 展示系统信息
-        //util.showInfo()
-        // 用户登陆后从数据库加载一系列的设置
-        this.$store.commit('d2adminLoginSuccessLoad')
-        // 初始化全屏监听
-        this.fullscreenListenerInit()
+    .then(values => {
+        var router = values[2].router;
+        var frameInRoutes = values[2].customRoutes;
+        window.myVue = new Vue({
+            router,
+            store,
+            //i18n,
+            render: h => h(App),
+            created() {
+                //获取用户菜单
+                this.$store.commit('get-menu', this)
+                    // 处理路由 得到每一级的路由设置
+                this.getAllPageFromRoutes()
+                    // 设置顶栏菜单
+                    //this.$store.commit('d2adminMenuHeaderSet', menuHeader)
+            },
+            mounted() {
+                // D2Admin 开发环境检查更新
+                //util.checkUpdate(this)
+                // 获取并记录用户 UA
+                this.$store.commit('d2adminUaGet')
+                    // 展示系统信息
+                    //util.showInfo()
+                    // 用户登陆后从数据库加载一系列的设置
+                this.$store.commit('d2adminLoginSuccessLoad')
+                    // 初始化全屏监听
+                this.fullscreenListenerInit()
 
 
-      },
-      watch: {
-        // 监听路由 控制侧边栏显示
-        '$route.matched'(val) {
-          //const _side = menuAside.filter(menu => menu.path === val[0].path)
-          const _side = this.$store.state.d2admin.menuHeader.filter(menu => menu.path === val[0].path)
-          this.$store.commit('d2adminMenuAsideSet', _side.length > 0 ? _side[0].children : [])
-        }
-      },
-      methods: {
-        /**
-         * 初始化全屏监听
-         */
-        fullscreenListenerInit() {
-          if (screenfull.enabled) {
-            screenfull.on('change', () => {
-              if (!screenfull.isFullscreen) {
-                this.$store.commit('d2adminFullScreenSet', false)
-              }
-            })
-          }
-        },
-        /**
-         * 处理路由 得到所有的页面
-         */
-        getAllPageFromRoutes() {
-          const pool = []
-          const push = function (routes) {
-            routes.forEach(route => {
-              if (route.children) {
-                push(route.children)
-              } else {
-                const {
-                  meta,
-                  name,
-                  path
-                } = route
-                pool.push({
-                  meta,
-                  name,
-                  path
-                })
-              }
-            })
-          }
-          push(frameInRoutes)
-          this.$store.commit('d2adminPagePoolSet', pool)
-        }
-      }
-    }).$mount('#app')
+            },
+            watch: {
+                // 监听路由 控制侧边栏显示
+                '$route.matched' (val) {
+                    //const _side = menuAside.filter(menu => menu.path === val[0].path)
+                    const _side = this.$store.state.d2admin.menuHeader.filter(menu => menu.path === val[0].path)
+                    this.$store.commit('d2adminMenuAsideSet', _side.length > 0 ? _side[0].children : [])
+                }
+            },
+            methods: {
+                /**
+                 * 初始化全屏监听
+                 */
+                fullscreenListenerInit() {
+                    if (screenfull.enabled) {
+                        screenfull.on('change', () => {
+                            if (!screenfull.isFullscreen) {
+                                this.$store.commit('d2adminFullScreenSet', false)
+                            }
+                        })
+                    }
+                },
+                /**
+                 * 处理路由 得到所有的页面
+                 */
+                getAllPageFromRoutes() {
+                    const pool = []
+                    const push = function(routes) {
+                        routes.forEach(route => {
+                            if (route.children) {
+                                push(route.children)
+                            } else {
+                                const {
+                                    meta,
+                                    name,
+                                    path
+                                } = route
+                                pool.push({
+                                    meta,
+                                    name,
+                                    path
+                                })
+                            }
+                        })
+                    }
+                    push(frameInRoutes)
+                    this.$store.commit('d2adminPagePoolSet', pool)
+                }
+            }
+        }).$mount('#app')
 
-  })
-  .catch(reason => {
-    console.error('NG', reason);
-  })
+    })
+    .catch(reason => {
+        console.error('NG', reason);
+    })

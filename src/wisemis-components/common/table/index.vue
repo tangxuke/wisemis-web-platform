@@ -9,46 +9,46 @@
 				<Button type="primary" @click="$refs.modal2.ShowDialog()">查询</Button>
 				<Button type="default" @click="refresh">刷新</Button>
 			</ButtonGroup>
-      <ButtonGroup style="margin:3px 10px;">
-        <template v-for="action in actions">
-          <template v-if="action.Remark">
-            <Tooltip :key="action.Action"  :delay="1000"  :max-width="500">
-              <Button
-              v-if="actionState[action.Action].visible"
-              :disabled="!actionState[action.Action].enable"
-              @click="doAction(action.Action)"
-              v-html="actionState[action.Action].title"
-              />
-              <div slot="content">
-                <div>{{action.Remark}}</div>
-              </div>
-            </Tooltip>
-          </template>
-          <template v-else>
-            <Button
-              :key="action.Action"
-              v-if="actionState[action.Action].visible"
-              :disabled="!actionState[action.Action].enable"
-              @click="doAction(action.Action)"
-              v-html="actionState[action.Action].title"
-              />
-          </template>
-        </template>
+			<ButtonGroup style="margin:3px 10px;">
+				<template v-for="action in actions">
+					<template v-if="action.Remark">
+						<Tooltip :key="action.Action"  :delay="1000"  :max-width="500">
+							<Button
+							v-if="actionState[action.Action].visible"
+							:disabled="!actionState[action.Action].enable"
+							@click="doAction(action.Action)"
+							v-html="actionState[action.Action].title"
+							/>
+							<div slot="content">
+								<div>{{action.Remark}}</div>
+							</div>
+						</Tooltip>
+					</template>
+					<template v-else>
+						<Button
+							:key="action.Action"
+							v-if="actionState[action.Action].visible"
+							:disabled="!actionState[action.Action].enable"
+							@click="doAction(action.Action)"
+							v-html="actionState[action.Action].title"
+							/>
+					</template>
+				</template>
 				
 			</ButtonGroup>
 			<slot></slot>
-      <ButtonGroup style="float:right">
-		  
-        <Dropdown trigger="click" :transfer="true" style="margin-left: 20px">
-          <Button type="default">列...</Button>
-          <DropdownMenu slot="list">
-              <el-scrollbar wrapClass="scrollbar-wrapper">
-                <div style="max-height:500px;width:200px;padding:5px;">
+			<ButtonGroup style="float:right">
+			
+				<Dropdown trigger="click" :transfer="true" style="margin-left: 20px">
+					<Button type="default">列...</Button>
+					<DropdownMenu slot="list">
+							<el-scrollbar wrapClass="scrollbar-wrapper">
+								<div style="max-height:500px;width:200px;padding:5px;">
 					<Row>
 						<Col :span="12" 
 						v-for="field in fields"
-                        :key="field.Name"
-                        :name="field.Name">
+												:key="field.Name"
+												:name="field.Name">
 							<Checkbox v-model="field.ShowInGrid">{{field.Title}}</Checkbox>
 						</Col>
 					</Row>
@@ -56,29 +56,37 @@
 						<Button type="success">确定</Button>
 						<Button type="dashed">取消</Button>
 					</Row>
-                </div>
-            </el-scrollbar>
-          </DropdownMenu>
-      </Dropdown>
-        
-      </ButtonGroup>
+								</div>
+						</el-scrollbar>
+					</DropdownMenu>
+			</Dropdown>
+				
+			</ButtonGroup>
 		</Row>
 		<Row>
 			<Table
+				ref="table"
 				:border="true" 
 				:highlight-row="true"
 				:columns="columns" 
 				:data="data1" 
-        :loading="loading"
+				:loading="loading"
 				@on-row-click="onRowClick"
-        @REFRESH-ACTION-STATE="refreshActionState"
+				@REFRESH-ACTION-STATE="refreshActionState"
 				no-data-text="暂无数据，请刷新或查询！"
 				style="margin-top:3px;"
 				>
 			</Table>
 		</Row>
 		<Row>
-			<Button type="default" style="margin:5px 0;" v-if="!hideButtons">导出</Button>
+
+			<Checkbox v-model="multiSelect">多选</Checkbox>
+			<ButtonGroup v-if="multiSelect">
+				<Button @click="selectAll(true)">全部选择</Button>
+				<Button @click="selectAll(false)">取消全选</Button>
+				<Button>多选操作...</Button>
+			</ButtonGroup>
+			<Button type="default" style="margin:5px;" v-if="!hideButtons">导出</Button>
 			<Page 
 				:total="Count" 
 				:page-size="pagesize" 
