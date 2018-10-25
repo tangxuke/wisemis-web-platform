@@ -1,5 +1,10 @@
+import SetValueDialog from './../dialog/set-value-dialog';
+
 export default {
     props: ["model", "pageSize", "hideAction", "hideButtons", "relatedTables"],
+    components: {
+        'set-value-dialog': SetValueDialog
+    },
     data() {
         return {
             multiSelect: false,
@@ -11,14 +16,17 @@ export default {
                 width: 60,
                 align: 'center',
                 key: '__checked__',
-                renderHeader:(h,{column,index})=>{
-                    return h('Checkbox',{
-                        props:{
-                            indeterminate:this.SelectState === -1,
-                            value:this.SelectState===1?true:false
+                renderHeader: (h, {
+                    column,
+                    index
+                }) => {
+                    return h('Checkbox', {
+                        props: {
+                            indeterminate: this.SelectState === -1,
+                            value: this.SelectState === 1 ? true : false
                         },
-                        on:{
-                            'on-change':value=>{
+                        on: {
+                            'on-change': value => {
                                 this.selectAll(value);
                             }
                         }
@@ -38,7 +46,7 @@ export default {
                     });
                 }
             },
-            actionColumn: [{
+            actionColumn: {
                 title: "Action",
                 key: "action",
                 fixed: "right",
@@ -81,7 +89,7 @@ export default {
                         )
                     ]);
                 }
-            }],
+            },
             where: {},
             query: {},
             title: "新建",
@@ -95,18 +103,18 @@ export default {
         };
     },
     computed: {
-        SelectState(){
-            if(Array.from(this.data1).length===0)
+        SelectState() {
+            if (Array.from(this.data1).length === 0)
                 return 0;
             //全选
-            if(Array.from(this.data1).every(item=>{
-                return item.__checked__;
-            }))
+            if (Array.from(this.data1).every(item => {
+                    return item.__checked__;
+                }))
                 return 1;
             //全不选
-            if(Array.from(this.data1).every(item=>{
-                return !item.__checked__;
-            }))
+            if (Array.from(this.data1).every(item => {
+                    return !item.__checked__;
+                }))
                 return 0;
             //不确定状态
             return -1;
@@ -135,19 +143,27 @@ export default {
                 });
             cols.push(...gridFields);
             if (!this.hideAction)
-                cols.push(...this.actionColumn);
+                cols.push(this.actionColumn);
             return cols;
+        },
+        editableFields() {
+            return this.fields.filter(item => {
+                return item.IsUpdate;
+            });
         }
     },
     methods: {
+        ShowSetValueDialog() {
+            this.$refs.set_value_dialog.$refs.dialog.ShowDialog();
+        },
         /**
          * 确认删除选定记录的操作
          */
-        confirmDeleteSelected(){
+        confirmDeleteSelected() {
             this.$Modal.confirm({
-                title:'系统提示',
-                content:'你真的要删除选定记录吗？',
-                onOk:()=>{
+                title: '系统提示',
+                content: '你真的要删除选定记录吗？',
+                onOk: () => {
                     setTimeout(() => {
                         this.deleteSelected();
                     }, 300);
@@ -157,36 +173,44 @@ export default {
         /**
          * 多选操作
          */
-        deleteSelected(){
-            
-            var keys=this.fields.filter(item=>{
+        deleteSelected() {
+
+            var keys = this.fields.filter(item => {
                 return item.IsKey;
-            }).map(item=>{
+            }).map(item => {
                 return item.Name;
             });
-            var data=[];
-            this.data1.filter(item=>{
+            var data = [];
+            this.data1.filter(item => {
                 return item.__checked__;
-            }).forEach(item=>{
-                var keyData={};
-                keys.forEach(key=>{
-                    keyData[key]=item[key];
+            }).forEach(item => {
+                var keyData = {};
+                keys.forEach(key => {
+                    keyData[key] = item[key];
                 });
                 data.push(keyData);
             });
-            
-            this.$axios.post(`/models/${this.model}/deleteMany`,{data})
-            .then(value=>{
-                if(value.success){
-                    this.$Message.success('删除成功！');
-                    this.refresh();
-                }else{
-                    this.$Modal.error({title:'删除失败',content:value.message});
-                }
-            })
-            .catch(reason=>{
-                this.$Modal.error({title:'删除失败',content:reason.message});
-            });
+
+            this.$axios.post(`/models/${this.model}/deleteMany`, {
+                    data
+                })
+                .then(value => {
+                    if (value.success) {
+                        this.$Message.success('删除成功！');
+                        this.refresh();
+                    } else {
+                        this.$Modal.error({
+                            title: '删除失败',
+                            content: value.message
+                        });
+                    }
+                })
+                .catch(reason => {
+                    this.$Modal.error({
+                        title: '删除失败',
+                        content: reason.message
+                    });
+                });
         },
         /**
          * 设置全选
@@ -419,7 +443,8 @@ export default {
         refresh: function() {
             this.loading = true;
             this.$axios
-                .post(`/models/${this.model}/count`, {...this.where,
+                .post(`/models/${this.model}/count`, {
+                    ...this.where,
                     ...this.query
                 })
                 .then(value => {
@@ -514,8 +539,8 @@ export default {
                 return;
             this.refreshActionState(newVal);
         },
-        multiSelect(){
+        multiSelect() {
             this.selectAll(false);
         }
     }
-};
+}

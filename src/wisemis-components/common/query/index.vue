@@ -12,7 +12,7 @@
                     <Button type="dashed" icon="md-add">添加查询字段</Button>
                     <DropdownMenu slot="list">
                         <el-scrollbar wrapClass="scrollbar-wrapper">
-                            <div style="max-height:500px;width:200px;">
+                            <div style="max-height:500px;width:80px;">
                                 <DropdownItem 
                                 v-for="field in fields2"
                                 :key="field.Name"
@@ -41,66 +41,63 @@ export default {
   },
   data() {
     return {
-      oModelObject:{}
+      oModelObject: {}
     };
   },
-  computed:{
-      fields(){
-        if(!Array.isArray(this.oModelObject.Fields))
-            return [];
-        return this.oModelObject.Fields.filter(item=>{
-            return item.SearchField;
-        });
-      },
-      fields2(){
-        if(!Array.isArray(this.oModelObject.Fields))
-            return [];
-        return this.oModelObject.Fields.filter(item=>{
-            return !item.SearchField;
-        });
-      }
+  computed: {
+    fields() {
+      if (!Array.isArray(this.oModelObject.Fields)) return [];
+      return this.oModelObject.Fields.filter(item => {
+        return item.SearchField;
+      });
+    },
+    fields2() {
+      if (!Array.isArray(this.oModelObject.Fields)) return [];
+      return this.oModelObject.Fields.filter(item => {
+        return !item.SearchField;
+      });
+    }
   },
   methods: {
-      /**打开文本对话框 */
-        openTextDialog(){
-            this.$dialogs.OpenTextDialog('添加自定义条件')
-            .then(value=>{
-                alert(value);
-            })
-            .catch(()=>{
-
-            });
-        },
-      /**
-       * 添加查询字段
-       * @param {string} name 字段名称
-       */
-      AddSearchField(name){
-          var oField=this.oModelObject.Fields.find(item=>{
-              return item.Name===name;
-          });
-          if(oField){
-              oField.SearchField=true;
-          }
-      },
-        query(){
-            var where=[];
-            for(var key in this.$refs){
-                var searchExpr=this.$refs[key][0].getSearchExpr();
-                where.push(searchExpr);
-            }
-            return {query:where};
-        },
-        clear(){
-            this.fields.forEach(item=>{
-                item.Value=item.DefaultValue;
-            })
-        },
+    /**打开文本对话框 */
+    openTextDialog() {
+      this.$dialogs
+        .OpenTextDialog("添加自定义条件")
+        .then(value => {
+          alert(value);
+        })
+        .catch(() => {});
+    },
+    /**
+     * 添加查询字段
+     * @param {string} name 字段名称
+     */
+    AddSearchField(name) {
+      var oField = this.oModelObject.Fields.find(item => {
+        return item.Name === name;
+      });
+      if (oField) {
+        oField.SearchField = true;
+      }
+    },
+    query() {
+      var where = [];
+      for (var key in this.$refs) {
+        var searchExpr = this.$refs[key][0].getSearchExpr();
+        where.push(searchExpr);
+      }
+      return { query: where };
+    },
+    clear() {
+      this.fields.forEach(item => {
+        item.Value = item.DefaultValue;
+      });
+    },
     getModel() {
       if (!this.model) return;
       this.$axios.post(`/models/${this.model}`).then(value => {
         if (value.success) {
-            this.oModelObject=value.result;
+          this.oModelObject = value.result;
         }
       });
     }

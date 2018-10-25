@@ -81,10 +81,16 @@
 		<Row>
 
 			<Checkbox v-model="multiSelect">多选</Checkbox>
-			<ButtonGroup v-if="multiSelect">
-				<Button type="error" ghost @click="confirmDeleteSelected">删除所选</Button>
+			<ButtonGroup v-if="multiSelect" style="margin:5px;">
+				<Button @click="confirmDeleteSelected">删除所选</Button>
+				<Button @click="ShowSetValueDialog">选择赋值</Button>
 			</ButtonGroup>
-			<Button type="default" style="margin:5px;" v-if="!hideButtons">导出</Button>
+			<set-value-dialog :fields="editableFields" ref="set_value_dialog"></set-value-dialog>
+			<ButtonGroup style="margin:5px;" v-if="!hideButtons">
+				<Button>导入</Button>
+				<Button>导出{{multiSelect?'所选':''}}</Button>
+			</ButtonGroup>
+			
 			<Page 
 				:total="Count" 
 				:page-size="pagesize" 
@@ -107,5 +113,12 @@
 </template>
 
 
-<script src="./script.js">
+<script src="./script/">
 </script>
+
+<style scoped>
+@import url("./style.css");
+d {
+  position: absolute;
+}
+</style>
