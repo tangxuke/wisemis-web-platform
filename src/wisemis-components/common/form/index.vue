@@ -1,15 +1,20 @@
 <template>
-    <Form is="Form" :label-width="80">
-        <Row> 
-            <my-field-control 
-              v-for="field in fields" 
-              :key="field.Name"
-              v-show="field.ShowInForm"
-              :oFieldObject="field"
-              :ref="field.Name"
-              ></my-field-control>
-        </Row>
-    </Form>
+	<Form is="Form" :label-width="80">
+		<Tabs>
+			<TabPane v-for="page in pages" :key="page.name" :label="page.name">
+				<Row> 
+					<my-field-control 
+					v-for="field in page.fields" 
+					:key="field.Name"
+					v-show="field.ShowInForm"
+					:oFieldObject="field"
+					:ref="field.Name"
+					></my-field-control>
+				</Row>
+			</TabPane>
+		</Tabs>
+		
+	</Form>
 </template>
 
 <script>
@@ -23,7 +28,8 @@ export default {
   data() {
     return {
       fields: [],
-      ColumnCount: 1
+      ColumnCount: 1,
+      pages: []
     };
   },
   methods: {
@@ -69,14 +75,22 @@ export default {
         .then(value => {
           if (value.success) {
             this.ColumnCount = value.result.ColumnCount;
+            
             this.fields = value.result.Fields.map(item => {
               item.thisform = this;
               item.Value = item.DefaultValue;
+              item.Page = item.Page || "基本信息";
               item.OldValue = item.DefaultValue;
               item.ColSpan = (24 / this.formColumnCount) * item.ColSpan;
               if (item.ColSpan > 24) item.ColSpan = 24;
               return item;
-            });
+			});
+			this.pages = (value.result.Pages || "基本信息").split(",").map(page=>{
+				var fields=this.fields.filter(item=>{
+					return item.Page===page;
+				});
+				return {name:page,fields:fields};
+			})
             //设置表单事件
             this.setEvents(value.result.FormScripts);
           } else {
@@ -177,9 +191,9 @@ export default {
     }
   },
   watch: {
-	  model(){
-		  this.getModel();
-	  }
+    model() {
+      this.getModel();
+    }
   }
 };
 </script>

@@ -25,6 +25,11 @@ export default {
         }
     },
     methods:{
+        /**
+         * @description 获取选项
+         * @param {string} type 选项类型
+         * @param {string} source 选项数据源
+         */
         getOptions(type,source){
             if(!type || !source)
                 return Promise.resolve([]);

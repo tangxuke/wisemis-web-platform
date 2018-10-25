@@ -28,14 +28,6 @@
 </template>
 
 <script>
-import VueComponent from "vue";
-import MyEditbox from "./form-controls/my-editbox";
-import MyTextbox from "./form-controls/my-textbox";
-import MyCheckbox from "./form-controls/my-checkbox";
-import MyDatePicker from "./form-controls/my-date-picker";
-import MySelect from "./form-controls/my-select";
-import MyList from "./form-controls/my-list";
-
 export default {
   props: {
     oFieldObject: {
@@ -69,14 +61,6 @@ export default {
         this.oFieldObject.ShowInForm = newVal;
       }
     }
-  },
-  components: {
-    "my-editbox": MyEditbox,
-    "my-textbox": MyTextbox,
-    "my-checkbox": MyCheckbox,
-    "my-date-picker": MyDatePicker,
-    "my-select": MySelect,
-    "my-list": MyList
   },
   methods: {
     /**
@@ -152,7 +136,6 @@ export default {
     },
     /**
      * 获取核心字段控件
-     * @returns {VueComponent}
      */
     getCoreFieldControl() {
       return this.$refs.field.$refs.control;

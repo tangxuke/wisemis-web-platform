@@ -82,10 +82,10 @@
 
 			<Checkbox v-model="multiSelect">多选</Checkbox>
 			<ButtonGroup v-if="multiSelect" style="margin:5px;">
-				<Button @click="confirmDeleteSelected">删除所选</Button>
-				<Button @click="ShowSetValueDialog">选择赋值</Button>
+				<Button @click="confirmDeleteSelected" :disabled="SelectState == 0">删除所选</Button>
+				<Button @click="ShowSetValueDialog" :disabled="SelectState == 0">选择赋值</Button>
 			</ButtonGroup>
-			<set-value-dialog :fields="editableFields" ref="set_value_dialog"></set-value-dialog>
+			<set-value-dialog :fields="getEditableFields()" ref="set_value_dialog" @ON-OK="onSetValueDialogOK"></set-value-dialog>
 			<ButtonGroup style="margin:5px;" v-if="!hideButtons">
 				<Button>导入</Button>
 				<Button>导出{{multiSelect?'所选':''}}</Button>
@@ -98,6 +98,9 @@
 				@on-change="refreshPage" 
 				style="float:right;margin:5px 0;"
 				v-if="Count>pagesize"
+				show-sizer
+				:page-size-opts="[10,100,500,1000]"
+				@on-page-size-change="dddd"
 			/>
 		</Row>
 		<Row>

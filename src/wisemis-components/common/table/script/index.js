@@ -12,6 +12,7 @@ export default {
             Count: 0,
             current: 1,
             data1: [],
+            tablename:'',
             selectionColumn: {
                 width: 60,
                 align: 'center',
@@ -146,13 +147,59 @@ export default {
                 cols.push(this.actionColumn);
             return cols;
         },
-        editableFields() {
-            return this.fields.filter(item => {
-                return item.IsUpdate;
-            });
-        }
+        
     },
     methods: {
+        getEditableFields() {
+            var form=this.getForm();
+            if(!form)
+                return [];
+            return form.fields.filter(item => {
+                return item.IsUpdate;
+            });
+        },
+        /**
+         * 选定列赋值返回结果
+         * @param {{Name:string,Value:string}} oFieldObject 
+         */
+        onSetValueDialogOK(oFieldObject){
+            var keys=this.fields.filter(item=>{
+                return item.IsKey;
+            }).map(item=>{
+                return item.Name;
+            });
+            var keysExpr=keys.map(key=>{
+                return '?'
+            }).join(' and ');
+            var values=[];
+            var data={};
+            data[oFieldObject.Name]=oFieldObject.Value;
+            var allSQL=Array.from(this.data1).filter(item=>{
+                return item.__checked__;
+            }).map(item=>{
+                var sql='update `'+this.tablename+'` set ? where '+keysExpr;
+                values.push(data);
+                
+                keys.forEach(key=>{
+                    var keyValue={};
+                    keyValue[key]=item[key];
+                    values.push(keyValue);
+                });
+
+                return sql;
+            }).join(';');
+            this.$methods.getSqlResults(allSQL,values)
+            .then(value=>{
+                this.$Message.success('选定记录赋值成功！');
+                this.refresh();
+            })
+            .catch(reason=>{
+                this.$Modal.error({
+                    title:'赋值失败',
+                    content:reason.message
+                });
+            });
+        },
         ShowSetValueDialog() {
             this.$refs.set_value_dialog.$refs.dialog.ShowDialog();
         },
@@ -498,7 +545,7 @@ export default {
                 .post(`/models/${this.model}`)
                 .then(value => {
                     if (value.success) {
-
+                        this.tablename=value.result.TableName;
                         this.modalWidth = value.result.ColumnCount * 300;
                         const fields = value.result.Fields.sort((a, b) => {
                             return a.OrderId - b.OrderId;
