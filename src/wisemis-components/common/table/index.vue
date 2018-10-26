@@ -87,9 +87,10 @@
 			</ButtonGroup>
 			<set-value-dialog :fields="getEditableFields()" ref="set_value_dialog" @ON-OK="onSetValueDialogOK"></set-value-dialog>
 			<ButtonGroup style="margin:5px;" v-if="!hideButtons">
-				<Button>导入</Button>
+				<Button @click="OpenImportDialog">导入</Button>
 				<Button>导出{{multiSelect?'所选':''}}</Button>
 			</ButtonGroup>
+			<my-import :model="model" ref="import"></my-import>
 			
 			<Page 
 				:total="Count" 
