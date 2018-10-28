@@ -1,9 +1,11 @@
-import SetValueDialog from './../dialog/set-value-dialog';
+import SetValueDialog from './dialog/set-value-dialog';
+import MyImport from './dialog/import';
 
 export default {
-    props: ["model", "pageSize", "hideAction", "hideButtons", "relatedTables"],
+    props: ["model", "hideAction", "hideButtons", "relatedTables","height"],
     components: {
-        'set-value-dialog': SetValueDialog
+        'set-value-dialog': SetValueDialog,
+        'my-import':MyImport
     },
     data() {
         return {
@@ -100,7 +102,8 @@ export default {
             actions: [],
             actionState: {},
             fields: [],
-            showMoreColumns: false
+            showMoreColumns: false,
+            pagesize:10
         };
     },
     computed: {
@@ -120,9 +123,6 @@ export default {
             //不确定状态
             return -1;
         },
-        pagesize: function() {
-            return this.pageSize || 8;
-        },
         modelName: function() {
             return this.model;
         },
@@ -134,13 +134,24 @@ export default {
                     return item.ShowInGrid;
                 })
                 .map(item => {
-                    return {
+                    var column={
                         key: item.Name,
                         title: item.Title,
                         minWidth: item.Width,
                         ellipsis: true,
                         tooltip: true
                     };
+                    if(item.GridRenderCode){
+                        column.render=new Function('h','{row,column,index}',item.GridRenderCode);
+                    };
+                    if(item.GridHeaderRenderCode){
+                        column.renderHeader=new Function('h','{column,index}',item.GridHeaderRenderCode);
+                    };
+                    //自动转换boolean类型字段
+                    if(item.Type==='boolean' && !item.GridRenderCode){
+                        column.render=new Function('h','{row,column,index}',`return h('Checkbox',{props:{value:row.${item.Name}}});`);
+                    }
+                    return column;
                 });
             cols.push(...gridFields);
             if (!this.hideAction)
@@ -150,6 +161,51 @@ export default {
 
     },
     methods: {
+        /**
+         * 打印测试
+         */
+        Print(){
+
+        },
+        /**
+         * 导出数据
+         */
+        ExportData(){
+            this.$Loading.start();
+            this.$axios
+                .post(`/models/${this.model}/data`, {
+                    ...this.where,
+                    ...this.query,
+                    export:true
+                })
+                .then(value => {
+                    if (value.success) {
+                        this.$Loading.finish();
+                        var a=document.createElement('a');
+                        a.href=value.result;
+                        //a.download="test";
+                        //a.setAttribute('target','_blank');
+                        //a.setAttribute('download',"test");
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        this.$Loading.error();
+                        alert(value.message);
+                    }
+                })
+                .catch(reason => {
+                    alert(reason.message);
+                });
+        },
+        /**
+         * 每页条数改变时发生
+         * @param {number} size 每页条数
+         */
+        onPageSizeChange(size){
+            this.pagesize=size;
+            this.refresh();
+        },
         /**
          * 打开导入对话框
          */
@@ -166,7 +222,7 @@ export default {
         },
         /**
          * 选定列赋值返回结果
-         * @param {{Name:string,Value:string}} oFieldObject 
+         * @param {{Name:string,UseExpression,Value:string}} oFieldObject 
          */
         onSetValueDialogOK(oFieldObject) {
             var keys = this.fields.filter(item => {
@@ -178,12 +234,17 @@ export default {
                 return '?'
             }).join(' and ');
             var values = [];
-            var data = {};
-            data[oFieldObject.Name] = oFieldObject.Value;
+            
             var allSQL = Array.from(this.data1).filter(item => {
                 return item.__checked__;
             }).map(item => {
                 var sql = 'update `' + this.tablename + '` set ? where ' + keysExpr;
+                var data = {};
+                if(oFieldObject.UseExpression)
+                    data[oFieldObject.Name]=new Function('data',oFieldObject.Value)(item);
+                else
+                    data[oFieldObject.Name]=oFieldObject.Value;
+
                 values.push(data);
 
                 keys.forEach(key => {
@@ -475,9 +536,10 @@ export default {
                 })
                 .then(value => {
                     if (value.success) {
-                        this.data1 = value.result.map(item => {
+                        this.data1 = value.result.map((item,index,arr) => {
                             return {
                                 __checked__: false,
+                                __index__:index+1,
                                 ...item
                             };
                         });

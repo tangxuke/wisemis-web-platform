@@ -10,6 +10,10 @@
 				<Button type="default" @click="refresh">刷新</Button>
 			</ButtonGroup>
 			<ButtonGroup style="margin:3px 10px;">
+				<Button @click="Print">预览</Button>
+				<Button>打印</Button>
+			</ButtonGroup>
+			<ButtonGroup style="margin:3px 10px;">
 				<template v-for="action in actions">
 					<template v-if="action.Remark">
 						<Tooltip :key="action.Action"  :delay="1000"  :max-width="500">
@@ -71,6 +75,7 @@
 				:columns="columns" 
 				:data="data1" 
 				:loading="loading"
+				:height="height || 400"
 				@on-row-click="onRowClick"
 				@REFRESH-ACTION-STATE="refreshActionState"
 				no-data-text="暂无数据，请刷新或查询！"
@@ -88,9 +93,9 @@
 			<set-value-dialog :fields="getEditableFields()" ref="set_value_dialog" @ON-OK="onSetValueDialogOK"></set-value-dialog>
 			<ButtonGroup style="margin:5px;" v-if="!hideButtons">
 				<Button @click="OpenImportDialog">导入</Button>
-				<Button>导出{{multiSelect?'所选':''}}</Button>
+				<Button @click="ExportData">导出</Button>
 			</ButtonGroup>
-			<my-import :model="model" ref="import"></my-import>
+			<my-import :model="model" :fields="fields" ref="import"></my-import>
 			
 			<Page 
 				:total="Count" 
@@ -98,10 +103,10 @@
 				:current.sync="current" 
 				@on-change="refreshPage" 
 				style="float:right;margin:5px 0;"
-				v-if="Count>pagesize"
+				v-if="Count>10"
 				show-sizer
 				:page-size-opts="[10,100,500,1000]"
-				@on-page-size-change="dddd"
+				@on-page-size-change="onPageSizeChange"
 			/>
 		</Row>
 		<Row>
@@ -117,7 +122,7 @@
 </template>
 
 
-<script src="./script/">
+<script src="./script">
 </script>
 
 <style scoped>

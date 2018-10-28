@@ -103,7 +103,7 @@ export default {
       this.$dialogs
         .OpenTextDialog(
           "编辑 - " + this.oFieldObject.Title,
-          this.oFieldObject.Value
+          this.oFieldObject.Value || ''
         )
         .then(value => {
           if (typeof this.oFieldObject.Value === "string")

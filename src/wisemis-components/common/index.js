@@ -11,7 +11,6 @@ import MyRelations from './relations'
 import MyButton from './button'
 import MyRelation from './relation'
 import MyQuery from './query'
-import MyImport from './import'
 
 Vue.component('my-form', MyForm)
 Vue.component('my-table', MyTable)
@@ -24,4 +23,3 @@ Vue.component('my-relations', MyRelations)
 Vue.component('my-button', MyButton)
 Vue.component('my-relation', MyRelation)
 Vue.component('my-query', MyQuery)
-Vue.component('my-import', MyImport)

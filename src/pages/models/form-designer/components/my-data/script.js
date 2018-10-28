@@ -30,6 +30,12 @@ export default {
 					tooltip:true
 				},
 				{
+					key:'remark',
+					title:'备注',
+					ellipsis: true,
+					tooltip:true
+				},
+				{
 					title: "Action",
 					fixed: 'right',
 					width: 80,
