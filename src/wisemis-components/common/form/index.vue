@@ -1,19 +1,29 @@
 <template>
 	<Form is="Form" :label-width="80">
-		<Tabs>
-			<TabPane v-for="page in pages" :key="page.name" :label="page.name">
-				<Row> 
-					<my-field-control 
-					v-for="field in page.fields" 
-					:key="field.Name"
-					v-show="field.ShowInForm"
-					:oFieldObject="field"
-					:ref="field.Name"
-					></my-field-control>
-				</Row>
-			</TabPane>
-		</Tabs>
-		
+	<!--Tabs>
+	  <TabPane v-for="myPage in thePages" :key="myPage.name" :label="myPage.name">
+		  <Row>
+			<my-field-control 
+			v-for="field in myPage.fields" 
+			:key="field.Name"
+			v-show="field.ShowInForm"
+			:oFieldObject="field"
+			:ref="field.Name"
+			></my-field-control> 
+		  </Row>
+	  </TabPane>
+	</Tabs-->
+
+	<Row>
+			<my-field-control 
+			v-for="field in fields" 
+			:key="field.Name"
+			v-show="field.ShowInForm"
+			:oFieldObject="field"
+			:ref="field.Name"
+			></my-field-control> 
+		  </Row>
+	  
 	</Form>
 </template>
 
@@ -29,7 +39,8 @@ export default {
     return {
       fields: [],
       ColumnCount: 1,
-      pages: []
+      thePages: [],
+      $fields: {}
     };
   },
   methods: {
@@ -54,12 +65,13 @@ export default {
      * @returns {boolean}
      */
     checkValid() {
+      debugger;
       var oField = this.fields
         .filter(item => {
           return (item.IsInsert || item.IsUpdate) && item.ShowInForm;
         })
         .find(item => {
-          return !item.control.checkValid();
+          return !item.$control.checkValid();
         });
       if (oField) {
         return false;
@@ -70,27 +82,32 @@ export default {
       if (!this.model) {
         return;
       }
+      var _this = this;
       this.$axios
         .post(`/models/${this.model}`)
         .then(value => {
           if (value.success) {
-            this.ColumnCount = value.result.ColumnCount;
-            
-            this.fields = value.result.Fields.map(item => {
-              item.thisform = this;
-              item.Value = item.DefaultValue;
-              item.Page = item.Page || "基本信息";
+            _this.ColumnCount = value.result.ColumnCount;
+            _this.fields = value.result.Fields.map(item => {
+              item.thisform = _this;
               item.OldValue = item.DefaultValue;
               item.ColSpan = (24 / this.formColumnCount) * item.ColSpan;
               if (item.ColSpan > 24) item.ColSpan = 24;
+              if (!item.Page) {
+                item.Page = "基本信息";
+              }
               return item;
-			});
-			this.pages = (value.result.Pages || "基本信息").split(",").map(page=>{
-				var fields=this.fields.filter(item=>{
-					return item.Page===page;
-				});
-				return {name:page,fields:fields};
-			})
+            });
+            if (!value.result.Pages) value.result.Pages = "基本信息";
+            _this.thePages = value.result.Pages.split(",").map(page => {
+              return {
+                name: page,
+                fields: _this.fields.filter(field => {
+                  return field.Page === page;
+                })
+              };
+            });
+
             //设置表单事件
             this.setEvents(value.result.FormScripts);
           } else {
@@ -137,6 +154,7 @@ export default {
       this.$emit("FORM-SET-VALUE", data);
     },
     save: function() {
+      debugger;
       if (!this.checkValid()) {
         return Promise.reject(new Error("验证数据有效性失败！"));
       }

@@ -103,7 +103,7 @@ export default {
       this.$dialogs
         .OpenTextDialog(
           "编辑 - " + this.oFieldObject.Title,
-          this.oFieldObject.Value || ''
+          this.oFieldObject.Value || ""
         )
         .then(value => {
           if (typeof this.oFieldObject.Value === "string")
@@ -142,9 +142,10 @@ export default {
     }
   },
   mounted() {
-    //把控件注册到表单，以便支持this.xxfield.setFocus()等功能
-    this.oFieldObject.thisform[this.oFieldObject.Name] = this;
-    this.oFieldObject.control = this;
+    debugger;
+    //把控件注册到表单，以便支持this.$fields.xxfield.setFocus()等功能
+    this.oFieldObject.thisform.$fields[this.oFieldObject.Name] = this;
+    this.oFieldObject.$control = this;
 
     if (this.oFieldObject.AutoFocus) this.setFocus();
 
