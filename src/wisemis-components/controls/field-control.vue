@@ -142,7 +142,6 @@ export default {
     }
   },
   mounted() {
-    debugger;
     //把控件注册到表单，以便支持this.$fields.xxfield.setFocus()等功能
     this.oFieldObject.thisform.$fields[this.oFieldObject.Name] = this;
     this.oFieldObject.$control = this;

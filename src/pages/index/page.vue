@@ -1,28 +1,77 @@
 <template>
-  <d2-container>
-    <d2-page-cover
-      title="I AM D2ADMIN"
-      sub-title="追求简约美感的后台管理系统集成方案">
-      <d2-icon-svg style="width: 120px;" name="d2admin"/>
-      <div slot="footer" class="index-btn-group">
-        <span @click="$open('https://github.com/d2-projects/d2-admin')">主页</span> |
-        <span @click="$open('http://d2admin.fairyever.com/zh/')">文档</span> |
-        <span @click="$open('https://github.com/d2-projects/d2-admin/issues')">issue</span> |
-        <span @click="$open('https://github.com/d2-projects/d2-admin/issues/new')">提问</span>
+<d2-container>
+  <a-calendar>
+    <ul class="events" slot="dateCellRender" slot-scope="value">
+      <li v-for="item in getListData(value)" :key="item.content">
+        <a-badge :status="item.type" :text="item.content" />
+      </li>
+    </ul>
+    <template slot="monthCellRender" slot-scope="value">
+      <div v-if="getMonthData(value)" class="notes-month">
+        <section>{{getMonthData(value)}}</section>
+        <span>Backlog number</span>
       </div>
-    </d2-page-cover>
+    </template>
+  </a-calendar>
   </d2-container>
 </template>
+<script>
+export default {
+  methods: {
+    getListData(value) {
+      let listData;
+      switch (value.date()) {
+        case 8:
+          listData = [
+            { type: 'warning', content: 'This is warning event.' },
+            { type: 'success', content: 'This is usual event.' },
+          ]; break;
+        case 10:
+          listData = [
+            { type: 'warning', content: 'This is warning event.' },
+            { type: 'success', content: 'This is usual event.' },
+            { type: 'error', content: 'This is error event.' },
+          ]; break;
+        case 15:
+          listData = [
+            { type: 'warning', content: 'This is warning event' },
+            { type: 'success', content: 'This is very long usual event。。....' },
+            { type: 'error', content: 'This is error event 1.' },
+            { type: 'error', content: 'This is error event 2.' },
+            { type: 'error', content: 'This is error event 3.' },
+            { type: 'error', content: 'This is error event 4.' },
+          ]; break;
+        default:
+      }
+      return listData || [];
+    },
 
-<style lang="scss" scoped>
-@import '~@/assets/style/public.scss';
-.index-btn-group {
-  color: $color-text-placehoder;
-  span {
-    color: $color-text-sub;
-    &:hover {
-      color: $color-text-main;
-    }
+    getMonthData(value) {
+      if (value.month() === 8) {
+        return 1394;
+      }
+    },
   }
+}
+</script>
+<style scoped>
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.events .ant-badge-status {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-overflow: ellipsis;
+  font-size: 12px;
+}
+.notes-month {
+  text-align: center;
+  font-size: 28px;
+}
+.notes-month section {
+  font-size: 28px;
 }
 </style>

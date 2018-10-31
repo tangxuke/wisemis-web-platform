@@ -21,16 +21,15 @@
 <template>
     <d2-container>
         <Row>
-            <Col :span="8" style="padding:3px;">
                 <my-table 
                     model="model" 
                     @ON-ROW-CLICK="onModelRowClick" 
                     :autoRefresh="true" 
+                    :height="300"
                     ref="table">
                 </my-table>
-            </Col>
-            <Col :span="16" style="padding:3px;">
-                <Row class="demo-tabs-style2">
+        </Row>
+        <Row class="demo-tabs-style2">
                     <Tabs type="card"  :animated="false">
                         <TabPane label="字段">
                             <my-table 
@@ -67,8 +66,6 @@
                         </TabPane>
                     </Tabs>
                 </Row>
-            </Col>
-        </Row>
     </d2-container>
 </template>
 

@@ -5,6 +5,15 @@ import App from './App'
 import axios from '@/plugin/axios'
 Vue.prototype.$axios = axios
 
+//引入ant-design-vue
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+Vue.use(Antd)
+
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+moment.locale('zh-cn')
+
 // flex.css
 import 'flex.css'
 import ElementUI from 'element-ui'

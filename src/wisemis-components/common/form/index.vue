@@ -39,8 +39,7 @@ export default {
     return {
       fields: [],
       ColumnCount: 1,
-      thePages: [],
-      $fields: {}
+      thePages: []
     };
   },
   methods: {
@@ -198,6 +197,7 @@ export default {
     }
   },
   mounted() {
+    this.$fields={};
     this.getModel();
   },
   computed: {

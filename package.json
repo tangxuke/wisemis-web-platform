@@ -13,6 +13,7 @@
     "doc:build": "vuepress build docs"
   },
   "dependencies": {
+    "ant-design-vue": "^1.1.7",
     "axios": "^0.17.1",
     "babel-polyfill": "^6.26.0",
     "better-scroll": "^1.12.1",
@@ -38,6 +39,7 @@
     "lowdb": "^1.0.0",
     "marked": "^0.3.9",
     "mockjs": "^1.0.1-beta3",
+    "moment": "^2.22.2",
     "npm": "^6.4.1",
     "papaparse": "^4.3.6",
     "particles.js": "^2.0.0",
