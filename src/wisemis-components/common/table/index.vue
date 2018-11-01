@@ -1,5 +1,9 @@
 <template>
 	<div>
+		<Row>
+			<!--查询栏-->
+			
+		</Row>
 		<Row v-if="!hideButtons">
 			<ButtonGroup>
 				<Button type="success" @click="createNew">新建</Button>
