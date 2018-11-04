@@ -6,6 +6,7 @@ import MyCheckbox from "./my-checkbox";
 import MyDatePicker from "./my-date-picker";
 import MySelect from "./my-select";
 import MyList from "./my-list";
+import MyRadio from './my-radio';
 
 Vue.component('my-editbox',MyEditbox);
 Vue.component('my-textbox',MyTextbox);
@@ -13,3 +14,4 @@ Vue.component('my-checkbox',MyCheckbox);
 Vue.component('my-date-picker',MyDatePicker);
 Vue.component('my-select',MySelect);
 Vue.component('my-list',MyList);
+Vue.component('my-radio',MyRadio);

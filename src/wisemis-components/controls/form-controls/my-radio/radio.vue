@@ -1,14 +1,9 @@
 <template>
-    <Select v-model="oFieldObject.Value" :transfer="true" ref="control">
-        <Option 
-            v-for="item in options" 
+    <RadioGroup  v-model="oFieldObject.Value" ref="control">
+        <Radio v-for="item in options" 
             :key="item.value"
-            :value="item.value"
-            :label="item.label"
-            v-html="item.label || item.value"
-            >
-            </Option>
-    </Select>
+            :label="item.value">{{item.label}}</Radio>
+    </RadioGroup>
 </template>
 
 <script>

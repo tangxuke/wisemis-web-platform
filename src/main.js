@@ -14,6 +14,10 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
 
+//json-format
+import JsonFormat from 'json-format'
+Vue.prototype.$JsonFormat=JsonFormat
+
 // flex.css
 import 'flex.css'
 import ElementUI from 'element-ui'

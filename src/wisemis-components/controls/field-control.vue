@@ -1,30 +1,30 @@
 <template>
-    <div is="Col" :span="oFieldObject.ColSpan">
-        <div is="FormItem"
-            :label-width="80"
-            :label="oFieldObject.Title" 
-            :style="style"
-            >
-            <div :is="oFieldObject.ControlType" :oFieldObject="oFieldObject" ref="field"></div>
-            <div slot="label">
-                <template v-if="oFieldObject.ToolTip">
-                    <Tooltip :max-width="500">
-                        <div slot="content">
-                            <div>
+	<div is="Col" :span="oFieldObject.ColSpan">
+		<div is="FormItem"
+			:label-width="80"
+			:label="oFieldObject.Title" 
+			:style="style"
+			>
+			<div :is="oFieldObject.ControlType" :oFieldObject="oFieldObject" ref="field"></div>
+			<div slot="label">
+				<template v-if="oFieldObject.ToolTip">
+					<Tooltip :max-width="500">
+						<div slot="content">
+							<div>
 {{oFieldObject.ToolTip}}
-                            </div>
-                        </div>
-                        <span style="cursor:pointer;color:indigo;" @click="openTextDialog">{{oFieldObject.Title}}</span>
-                    </Tooltip>
-                </template>
-                <template v-else>
-                    <span style="cursor:pointer;color:indigo;" @click="openTextDialog">{{oFieldObject.Title}}</span>
-                </template>
-                <span v-if="oFieldObject.IsKey || oFieldObject.IsNotNull" style="color:red; margin-left:3px;">*</span>
+							</div>
+						</div>
+						<span style="cursor:pointer;color:indigo;" @click="openTextDialog">{{oFieldObject.Title}}</span>
+					</Tooltip>
+				</template>
+				<template v-else>
+					<span style="cursor:pointer;color:indigo;" @click="openTextDialog">{{oFieldObject.Title}}</span>
+				</template>
+				<span v-if="(oFieldObject.IsInsert || oFieldObject.IsUpdate) && oFieldObject.IsNotNull" style="color:red; margin-left:3px;">*</span>
 
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -35,6 +35,7 @@ export default {
     }
   },
   computed: {
+	
     style() {
       if (
         Number.isInteger(this.oFieldObject.ControlHeight) &&
@@ -50,12 +51,12 @@ export default {
         return this.oFieldObject.Value;
       },
       set(newVal) {
-        this.oFieldObject.Value = newVal;
+		this.oFieldObject.Value = newVal;
       }
     },
     Visible: {
       get() {
-        return this.oFieldObject.ShowInForm;
+		return this.oFieldObject.ShowInForm;
       },
       set(newVal) {
         this.oFieldObject.ShowInForm = newVal;
@@ -159,6 +160,13 @@ export default {
         fn.call(this.oFieldObject.thisform, ...aParams);
       });
     });
+  },
+  watch:{
+	  'oFieldObject.Value':function(newValue){
+		  if(this.oFieldObject.thisform){
+			  this.oFieldObject.thisform.$emit('FORM-VALUE-CHANGE',{name:this.oFieldObject.Name,value:newValue});
+		  }
+	  }
   }
 };
 </script>

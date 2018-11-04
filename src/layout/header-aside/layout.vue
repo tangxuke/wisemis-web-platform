@@ -44,7 +44,8 @@
           </div>
           <div class="d2-theme-container-main-body" flex-box="1">
             <transition name="fade-transverse">
-              <keep-alive :include="d2adminKeepAliveInclude">
+              <!--keep-alive :include="d2adminKeepAliveInclude"-->
+              <keep-alive>
                 <router-view/>
               </keep-alive>
             </transition>
